@@ -1,0 +1,17 @@
+name:
+    - en: default, ru: стандартная
+sizes:
+	- x: 30, y: 20
+platforms:
+	- x: 1, y: 1, w: 30, h: 3
+	- x: 1, y: 4, w: 5, h: 1
+	- x: 26, y: 4, w: 5, h: 1
+	- x: 11, y: 10, w: 10, h: 2
+thorns:
+    - x: 12, y: 4
+    - x: 13, y: 4
+	- x: 16, y: 4
+	- x: 17, y: 4
+flags:
+	- color: blue, x: 3, y: 5
+	- color: red, x: 27, y: 5

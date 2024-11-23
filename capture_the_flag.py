@@ -1,10 +1,11 @@
 import pygame
-import main, maps, pregame, game
+import main, maps, replays, pregame, game
 
 
 USE = main.run
 MODES = {
 	"MAIN": main.run,
+	"REPLAYS": replays.run,
 	"MAPS": maps.run,
 	"PREGAME": pregame.run,
 	"GAME": game.run,

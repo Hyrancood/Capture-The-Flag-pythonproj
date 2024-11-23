@@ -1,5 +1,5 @@
 import pygame
 
 
-def run():
+def run(**kwargs):
 	return "PREGAME"

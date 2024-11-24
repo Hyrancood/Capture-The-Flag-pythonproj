@@ -1,3 +1,6 @@
+import gamemap as gmap
+
+
 def parse_value(value):
     if all(character.isdigit() for character in value):
         return int(value)
@@ -14,7 +17,7 @@ def parse_object(object_string):
     return obj
 
 
-def parse_map(file_content):
+def parse_map(file_content) -> gmap.Map:
     state = "START"
     data = {}
     current_key = None
@@ -35,7 +38,7 @@ def parse_map(file_content):
                 state = "READING"
             else:
                 raise ValueError("Invalid syntax: expected key ending with ':'")
-    return data
+    return gmap.Map(data)
 
 
 def check_type_valid(parameter, value, t):
@@ -208,7 +211,7 @@ def is_valid(file_content):
             else:
                 raise ValueError("Invalid syntax: expected key ending with ':'")
     sections[key] = section.copy()
-    
+
     if "name" not in sections:
         raise ValueError("Invalid structure: key 'name' wasn't found")
     if is_name_valid(sections["name"]):
@@ -232,12 +235,16 @@ def is_valid(file_content):
     return True
 
 
-def from_file(path):
-    with open(path) as file:
+def from_file(path) -> gmap.Map:
+    with open(path, encoding="UTF-8") as file:
         lines = list(file.readlines())
         if is_valid(lines):
             return parse_map(lines)
 
 
 if __name__ == "__main__":
-    print(from_file("maps/default.ctfmap"))
+    mp = from_file("maps/default.ctfmap")
+    print(f"Name: {mp.name['ru']}")
+    print(f"Sizes: {mp.sizes['x']}x{mp.sizes['y']}")
+    print("Map:")
+    mp.printmap()

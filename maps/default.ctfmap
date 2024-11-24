@@ -10,10 +10,10 @@ platforms:
 	- x: 7, y: 6, w: 3, h: 1
 	- x: 22, y: 6, w: 3, h: 1
 thorns:
-    - x: 12, y: 4
     - x: 13, y: 4
-	- x: 16, y: 4
+    - x: 14, y: 4
 	- x: 17, y: 4
+	- x: 18, y: 4
 flags:
 	- color: blue, x: 3, y: 5
-	- color: red, x: 27, y: 5
+	- color: red, x: 28, y: 5

@@ -1,8 +1,9 @@
 import pygame
 import readmap
+import gamemap as gmap
 
 
-MAP = readmap.from_file("maps/default.ctfmap")
+MAP = readmap.from_file("maps/default.ctfmap") #gmap.Map()
 PLATFORMS = {
     "ground": pygame.image.load("assets/ground/ground.png"),
     "top": pygame.image.load("assets/ground/top_ground.png"),
@@ -24,20 +25,20 @@ BG = None
 
 def get_sprite(x, y, map_platforms, sizes):
     sprite = PLATFORMS["ground"]
-    if y + 1 < sizes[1] and x + 1 < sizes[0]:
-        if map_platforms[y + 1][x] and map_platforms[y][x+1] and not map_platforms[y+1][x+1]:
-            return PLATFORMS["top-right-corner"]
-    if y + 1 < sizes[1] and x - 1 >= 0:
-        if map_platforms[y + 1][x] and map_platforms[y][x-1] and not map_platforms[y+1][x-1]:
-            return PLATFORMS["top-left-corner"]
     if y - 1 >= 0 and x + 1 < sizes[0]:
         if map_platforms[y - 1][x] and map_platforms[y][x+1] and not map_platforms[y-1][x+1]:
-            return PLATFORMS["bottom-right-corner"]
+            return PLATFORMS["top-right-corner"]
     if y - 1 >= 0 and x - 1 >= 0:
         if map_platforms[y - 1][x] and map_platforms[y][x-1] and not map_platforms[y-1][x-1]:
+            return PLATFORMS["top-left-corner"]
+    if y + 1 < sizes[1] and x + 1 < sizes[0]:
+        if map_platforms[y + 1][x] and map_platforms[y][x+1] and not map_platforms[y+1][x+1]:
+            return PLATFORMS["bottom-right-corner"]
+    if y + 1 < sizes[1] and x - 1 >= 0:
+        if map_platforms[y + 1][x] and map_platforms[y][x-1] and not map_platforms[y+1][x-1]:
             return PLATFORMS["bottom-left-corner"]
-    if y + 1 < sizes[1]:
-        if not map_platforms[y + 1][x]:
+    if y - 1 >= 0:
+        if not map_platforms[y - 1][x]:
             sprite = PLATFORMS["top"]
             if x + 1 < sizes[0]:
                 if not map_platforms[y][x + 1]:
@@ -46,8 +47,8 @@ def get_sprite(x, y, map_platforms, sizes):
                 if not map_platforms[y][x - 1]:
                     sprite = PLATFORMS["top-left"]
             return sprite
-    if y - 1 >= 0:
-        if not map_platforms[y - 1][x]:
+    if y + 1 < sizes[1]:
+        if not map_platforms[y + 1][x]:
             sprite = PLATFORMS["bottom"]
             if x + 1 < sizes[0]:
                 if not map_platforms[y][x + 1]:
@@ -65,33 +66,36 @@ def get_sprite(x, y, map_platforms, sizes):
     return sprite
 
 
-def map_surface(map):
-    sizes = (map["sizes"][0]["x"], map["sizes"][0]["y"])
+def map_surface(gamemap: gmap.Map):
+    sizes = gamemap.get_sizes()
     sizes32 = (sizes[0]*32, sizes[1]*32)
     surface = pygame.Surface(sizes32)
     surface.fill((10, 100, 160))
-    map_platforms = [[False for x in range(sizes[0])] for y in range(sizes[1])]
-    platforms = []
-    for platform in map["platforms"]:
-        for x in range(platform['x'] - 1, platform['x'] + platform['w'] - 1):
-            for y in range(platform['y'] - 1, platform['y'] + platform['h'] - 1):
-                map_platforms[y][x] = True
-                platforms.append((x, y))
-    for x, y in platforms:
-        surface.blit(get_sprite(x,y,map_platforms, sizes), (x * 32, sizes32[1] - (y+1) * 32))
-    for thorn in map["thorns"]:
-        surface.blit(THORNS, (thorn["x"]*32, sizes32[1] - (thorn["y"])*32))
+
+    platforms_only = [[0 for __ in range(sizes[0])] for _ in range(sizes[1])]
+    for x in range(sizes[0]):
+        for y in range(sizes[1]):
+            if gamemap.map[y][x] == 1:
+                platforms_only[y][x] = 1
+            else:
+                platforms_only[y][x] = 0
+    for x in range(sizes[0]):
+        for y in range(sizes[1]):
+            if gamemap.map[y][x] == 1:
+                surface.blit(get_sprite(x, y, platforms_only, sizes), (x * 32, y * 32))
+            if gamemap.map[y][x] == 2:
+                surface.blit(THORNS, (x * 32, y * 32))
     return surface
 
 
 
-def draw_background_for_map(map):
+def draw_background_for_map(gamemap: gmap.Map):
     surface = pygame.Surface((1280, 720))
     surface.fill((20, 20, 20))
-    sizes = (map["sizes"][0]["x"], map["sizes"][0]["y"])
+    sizes = gamemap.get_sizes()
     x = (1280 - sizes[0]*32)//2 - 1
     y = (720 - sizes[1]*32)//2 - 1
-    surface.blit(map_surface(map), (x, y))
+    surface.blit(map_surface(gamemap), (x, y))
     return surface
 
 

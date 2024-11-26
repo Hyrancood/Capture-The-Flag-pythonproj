@@ -100,10 +100,12 @@ def draw_background_for_map(gamemap: gmap.Map):
 
 
 def run(**kwargs):
+    global BG
     screen = kwargs["screen"]
+    if BG is None:
+        BG = draw_background_for_map(MAP)
     screen.blit(BG, (0,0))
 
-    screen.fill("red")
     pygame.display.flip()
     kwargs["clock"].tick(60)
     return "GAME"

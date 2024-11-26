@@ -1,2 +1,3 @@
-# Capture The Flag pythonproj
- 
+# Capture The Flag
+## Введение
+**Захват Флага** - игра для двоих игроков.

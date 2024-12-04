@@ -34,7 +34,7 @@ buttons2[5] = pygame.image.load("assets/ability5_pushed.png")
 i, j = 0, 0
 #номер выбранной кнопки слева и справа соответственно
 
-NEXT = ["GAME"]
+NEXT = ["MAPS"]
 ispushed1=[0]*6
 ispushed2=[0]*6
 

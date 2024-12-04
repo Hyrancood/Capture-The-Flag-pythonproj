@@ -1,6 +1,6 @@
 import pygame
 import pathlib, subprocess
-import readmap
+import readmap, core
 import gamemap as gmap
 
 
@@ -127,6 +127,7 @@ def run(**kwargs):
                     if btn == 0:
                         open_maps_folder()
                     elif btn == 1 and CAN_PLAY:
+                        core.instance.set_map(MAPS[index][2][1])
                         return "GAME"
                     elif btn == 2:
                         update_maps(screen, font)

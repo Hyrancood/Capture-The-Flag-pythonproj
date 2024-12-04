@@ -1,4 +1,5 @@
 import pygame
+import player
 
 background = pygame.image.load("assets/main_menu_bg.png")
 current_buttons1=[0]*6
@@ -37,6 +38,9 @@ i, j = 0, 0
 NEXT = ["MAPS"]
 ispushed1=[0]*6
 ispushed2=[0]*6
+
+red = player.Player()
+blue = player.Player()
 
 def run(**kwargs):
 	global i
@@ -84,6 +88,8 @@ def run(**kwargs):
 			if event.key == 119:
 				i-=1
 	if ispushed1[0]==1 and ispushed2[0]==1:
+		red.set_abilities(ispushed1[1:])
+		blue.set_abilities(ispushed2[1:])
 		return NEXT[0]
 	screen = kwargs["screen"]
 	screen.blit(background, (0, 0))

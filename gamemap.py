@@ -1,3 +1,6 @@
+import pygame
+
+
 class Map:
     def __init__(self, data):
         self.name = {}
@@ -9,11 +12,13 @@ class Map:
             for size in obj:
                 self.sizes[size] = obj[size]
         self.map = [[0 for __ in range(self.sizes['x'])] for _ in range(self.sizes['y'])]
+        self.platforms = []
         for platform in data.get('platforms', []):
-            plat = Platform(**platform)
+            plat = Platform(**platform, map_y=self.sizes[1])
             for x in plat.get_x_range():
                 for y in plat.get_y_range_for_map(self.sizes['y']):
                     self.map[y][x] = 1
+            self.platforms.append(plat)
         for thorns in data.get('thorns', []):
             self.map[self.sizes['y'] - thorns['y']][thorns['x'] - 1] = 2
         self.flags = {}
@@ -36,6 +41,8 @@ class Platform:
         self.y = kwargs['y'] - 1
         self.w = kwargs.get('w', 1)
         self.h = kwargs.get('h', 1)
+        map_y = kwargs['map_y']
+        self.rect = pygame.Rect(32*self.x, 32*(map_y - self.y - self.h), 32*self.w, 32*self.h)
 
     def get_x_range(self):
         return range(self.x, self.x + self.w)

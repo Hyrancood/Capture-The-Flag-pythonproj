@@ -1,5 +1,5 @@
 import pygame
-import readmap
+import readmap, core
 import gamemap as gmap
 
 
@@ -103,7 +103,7 @@ def run(**kwargs):
     global BG
     screen = kwargs["screen"]
     if BG is None:
-        BG = draw_background_for_map(MAP)
+        BG = draw_background_for_map(core.instance.map)
     screen.blit(BG, (0,0))
 
     pygame.display.flip()

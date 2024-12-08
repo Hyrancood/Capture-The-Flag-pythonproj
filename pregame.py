@@ -39,8 +39,8 @@ NEXT = ["MAPS"]
 ispushed1=[0]*6
 ispushed2=[0]*6
 
-red = player.Player()
-blue = player.Player()
+red = player.Player('red')
+blue = player.Player('blue')
 
 def run(**kwargs):
 	global i

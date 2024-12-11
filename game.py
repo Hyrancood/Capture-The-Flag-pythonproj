@@ -1,6 +1,7 @@
 import pygame
 import core
 import gamemap as gmap
+import player
 from core import instance
 
 
@@ -17,6 +18,12 @@ def run(**kwargs):
 
     screen.blit(BG[1], BG[2])
 
+# platforms' hitboxes
+#    for platform in core.instance.collides:
+#        surf = pygame.Surface((platform.width, platform.height))
+#        surf.fill((255, 0, 128))
+#        surf.set_alpha(200)
+#        screen.blit(surf, platform)
     for team_name in core.instance.teams:
         team = core.instance.teams[team_name]
         team.flag.render_at(screen)
@@ -26,6 +33,7 @@ def run(**kwargs):
         surf.fill((255, 255, 0))
         surf.set_alpha(200)
         screen.blit(surf, team_player_rect)
+        team.player.update(**kwargs, platforms=core.instance.collides)
 
     pygame.display.update(BG[3])
     kwargs["clock"].tick(60)

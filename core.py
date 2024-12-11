@@ -9,8 +9,8 @@ class Core:
         self.map = None
         self.collides = []
         self.teams = {
-            "red": Team(Player(), None),
-            "blue": Team(Player(), None)
+            "red": Team(Player("red"), None),
+            "blue": Team(Player("blue"), None)
         }
         self.is_game = False
 
@@ -25,11 +25,13 @@ class Core:
         if self.map == None:
             raise ValueError
         background = renderer.draw_background_for_map(self.map)
+        for platform in self.collides:
+            platform.move_ip(background[2])
         for team_name in self.teams:
             team = self.teams[team_name]
             team.flag.shift(background[2])
             team.player.rect.move_ip(team.flag.get_init_cords())
-            #team.player.rect.move(100, -64)
+            team.player.rect.move_ip(0, -64)
         self.is_game = True
         return background
 
@@ -52,13 +54,6 @@ class Core:
             if team.player != player:
                 if team.flag.rect.colliderect(player.rect):
                     pass #TODO: взаимодействие с флагами, подбор флага
-
-    def is_player_on_ground(self, player):
-        return any(platform.rect.collidepoint(player.rect.bottomleft) or
-                   platform.rect.collidepoint(player.rect.bottomright) or
-                   platform.rect.collidepoint(player.rect.bottom)
-                   for platform in self.collides)
-
 
 
 class Team:

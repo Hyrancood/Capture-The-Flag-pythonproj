@@ -1,5 +1,3 @@
-from pygame.examples.sprite_texture import sprite
-
 import gamemap as gmap
 import rendermap as renderer
 from player import Player
@@ -54,6 +52,13 @@ class Core:
             if team.player != player:
                 if team.flag.rect.colliderect(player.rect):
                     pass #TODO: взаимодействие с флагами, подбор флага
+
+    def is_player_on_ground(self, player):
+        return any(platform.rect.collidepoint(player.rect.bottomleft) or
+                   platform.rect.collidepoint(player.rect.bottomright) or
+                   platform.rect.collidepoint(player.rect.bottom)
+                   for platform in self.collides)
+
 
 
 class Team:

@@ -14,9 +14,9 @@ class Map:
         self.map = [[0 for __ in range(self.sizes['x'])] for _ in range(self.sizes['y'])]
         self.platforms = []
         for platform in data.get('platforms', []):
-            plat = Platform(**platform, map_y=self.sizes[1])
+            plat = Platform(**platform, map_y=self.sizes['y'])
             for x in plat.get_x_range():
-                for y in plat.get_y_range_for_map(self.sizes['y']):
+                for y in plat.get_y_range_for_map(self):
                     self.map[y][x] = 1
             self.platforms.append(plat)
         for thorns in data.get('thorns', []):
@@ -50,5 +50,5 @@ class Platform:
     def get_y_range(self):
         return range(self.y, self.y + self.h)
 
-    def get_y_range_for_map(self, map_y):
-        return range(map_y - self.y - self.h, map_y - self.y)
+    def get_y_range_for_map(self, gmap: Map):
+        return range(gmap.sizes['y'] - self.y - self.h, gmap.sizes['y'] - self.y)

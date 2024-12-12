@@ -1,3 +1,5 @@
+from fontTools.subset import prune_hints
+
 import vector
 import pygame
 
@@ -37,8 +39,9 @@ class Player:
         return teams['blue'].player if self.color=='red' else teams['red'].player
 
     def is_on_ground(self, platforms):
-        test_pos = [self.rect.bottomleft, self.rect.midbottom, self.rect.bottomright]
-        return any(any(platform.collidepoint((pos[0], pos[1]+1)) for pos in test_pos) for platform in platforms)
+        player_rect = pygame.Rect(self.rect)
+        player_rect.move_ip(0, 1)
+        return any(player_rect.colliderect(platform) for platform in platforms)
 
     def is_standing_on_other_player(self, other: "Player"):
         player_rect = pygame.Rect(self.rect)
@@ -83,34 +86,50 @@ class Player:
                 self.velocity.x -= mode * self.speed * (DASH_POWER / DASH_DURATION)
             self.dash -= mode
 
-    def handle_movement(self, **kwargs):
-        self.calculate_velocity(**kwargs)
-        self.handle_collisions_with_platforms(**kwargs)
-        self.handle_collision_with_other_player(self.opposite(kwargs['teams']))
-        self.handle_collision_with_enemy_flag(**kwargs)
-        #self.rect.move_ip(self.velocity.x, self.velocity.y)
+    def handle_collision_with_rect(self, dx, dy, rect: pygame.Rect):
+        player_rect = pygame.Rect(self.rect)
+        print(player_rect, rect, dx, dy)
+        player_rect.move_ip(0, dy)
+        if player_rect.colliderect(rect):
+            if dy > 0:
+                print("dy>0", dy, dy - (player_rect.bottom - rect.top))
+                dy -= (player_rect.bottom - rect.top)
+                player_rect.bottom = rect.top
+            if dy < 0:
+                print("dy<0", dy, dy + rect.bottom - player_rect.top)
+                dy += rect.bottom - player_rect.top
+                player_rect.top = rect.bottom
+        player_rect.move_ip(dx, 0)
+        if player_rect.colliderect(rect):
+            if dx > 0:
+                print("dx>0", dx, dx - (player_rect.right - rect.left))
+                dx -= (player_rect.right - rect.left)
+                player_rect.right = rect.left
+            if dx < 0:
+                print("dx<0", dx, dx + rect.right - player_rect.left)
+                dx += rect.right - player_rect.left
+                player_rect.left = rect.right
+        return dx, dy
 
     def handle_collisions_with_platforms(self, **kwargs):
-        pass
+        dx, dy = kwargs['dx'], kwargs['dy']
+        for platform in kwargs['platforms']:
+            dx, dy = self.handle_collision_with_rect(dx, dy, platform)
+        return dx, dy
 
-    def handle_collision_with_other_player(self, other: "Player"):
-        dx, dy = self.velocity.x, self.velocity.y
-        if abs(dx) < 0.05:
-            dx = 0
-        if abs(dy) < 0.05:
-            dy = 0
-        self.rect.move_ip(0, dy)
-        if self.rect.colliderect(other.rect):
-            if dy > 0:
-                self.rect.bottom = other.rect.top
-            if dy < 0:
-                self.rect.top = other.rect.bottom
-        self.rect.move_ip(dx, 0)
-        if self.rect.colliderect(other.rect):
-            if dx > 0:
-                self.rect.right = other.rect.left
-            if dx < 0:
-                self.rect.left = other.rect.right
+    def handle_collision_with_other_player(self, dx, dy, other: "Player"):
+        return self.handle_collision_with_rect(dx, dy, other.rect)
 
     def handle_collision_with_enemy_flag(self, **kwargs):
-        pass
+        dx, dy = kwargs['dx'], kwargs['dy']
+        return dx, dy
+
+    def handle_movement(self, **kwargs):
+        self.calculate_velocity(**kwargs)
+        dx, dy = self.velocity.x, self.velocity.y
+        dx, dy = self.handle_collisions_with_platforms(**kwargs, dx=dx, dy=dy)
+        dx, dy = self.handle_collision_with_other_player(dx, dy, self.opposite(kwargs['teams']))
+        dx, dy = self.handle_collision_with_enemy_flag(**kwargs, dx=dx, dy=dy)
+        self.rect.move_ip(dx, dy)
+        if dy > self.velocity.y:
+            self.velocity.y = 0

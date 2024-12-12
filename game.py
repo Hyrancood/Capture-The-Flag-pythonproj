@@ -26,14 +26,12 @@ def run(**kwargs):
 #        screen.blit(surf, platform)
     for team_name in core.instance.teams:
         team = core.instance.teams[team_name]
-        team.flag.render_at(screen)
         #team.player.tick(kwargs)
-        team_player_rect = team.player.rect
-        surf = pygame.Surface((team_player_rect.width, team_player_rect.height))
-        surf.fill((255, 255, 0))
-        surf.set_alpha(200)
-        screen.blit(surf, team_player_rect)
-        team.player.update(**kwargs, platforms=core.instance.collides, teams=core.instance.teams)
+        team.player.update(**kwargs,
+                           platforms=core.instance.collides,
+                           teams=core.instance.teams,
+                           thorns=core.instance.thorns)
+        team.flag.render_at(screen)
 
     pygame.display.update(BG[3])
     kwargs["clock"].tick(60)

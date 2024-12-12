@@ -1,5 +1,3 @@
-from fontTools.subset import prune_hints
-
 import vector
 import pygame
 
@@ -13,7 +11,9 @@ class Player:
     def __init__(self,chosen_color):
         self.color=chosen_color
         self.in_air=0
+        self.spawn_point = None
         self.dash = 0
+        self.dead = 0
         if self.color=='red':
             self.movement_buttons = {1073741903:'right', 1073741904:'left', 1073741906:'up', 1073741905: "dash"}
         else:
@@ -31,6 +31,18 @@ class Player:
                 for i2 in range(i1+1,len(abilities)):
                     if abilities[i2] == 1:
                         self.second_ability=i2
+
+    def is_dead(self):
+        return self.dead > 0
+
+    def die(self):
+        self.dead = 60 * 5
+
+    def blit_on_screen(self, screen):
+        surf = pygame.Surface((self.rect.width, self.rect.height))
+        surf.fill((255, 255, 0))
+        surf.set_alpha(200)
+        screen.blit(surf, self.rect)
 
     def set_position(self,x_set,y_set):
         self.rect.move(x_set, y_set)
@@ -51,9 +63,24 @@ class Player:
     def is_in_dash(self):
         return abs(self.dash) > DASH_COOLDOWN - DASH_DURATION
 
+    def spawn(self, **kwargs):
+        if self.spawn_point is None:
+            self.spawn_point = (kwargs['spawn_x'], kwargs['spawn_y'])
+        self.rect = pygame.Rect(self.spawn_point, (32, 64))
+        self.velocity=vector.Vector()
+        self.dash = 0
+
     def update(self,**kwargs):
         #self.handle_events(kwargs['events'])
-        self.handle_movement(**kwargs)
+        if self.is_dead():
+            self.dead -= 1
+            if self.dead == 0:
+                self.spawn(**kwargs)
+        else:
+            self.handle_movement(**kwargs)
+            if self.rect.collidelist(kwargs['thorns']) >= 0:
+                self.die()
+            self.blit_on_screen(kwargs['screen'])
 
     def calculate_velocity(self, **kwargs):
         on_ground = (self.is_on_ground(kwargs['platforms']) or
@@ -88,25 +115,20 @@ class Player:
 
     def handle_collision_with_rect(self, dx, dy, rect: pygame.Rect):
         player_rect = pygame.Rect(self.rect)
-        print(player_rect, rect, dx, dy)
         player_rect.move_ip(0, dy)
         if player_rect.colliderect(rect):
             if dy > 0:
-                print("dy>0", dy, dy - (player_rect.bottom - rect.top))
                 dy -= (player_rect.bottom - rect.top)
                 player_rect.bottom = rect.top
             if dy < 0:
-                print("dy<0", dy, dy + rect.bottom - player_rect.top)
                 dy += rect.bottom - player_rect.top
                 player_rect.top = rect.bottom
         player_rect.move_ip(dx, 0)
         if player_rect.colliderect(rect):
             if dx > 0:
-                print("dx>0", dx, dx - (player_rect.right - rect.left))
                 dx -= (player_rect.right - rect.left)
                 player_rect.right = rect.left
             if dx < 0:
-                print("dx<0", dx, dx + rect.right - player_rect.left)
                 dx += rect.right - player_rect.left
                 player_rect.left = rect.right
         return dx, dy
@@ -118,6 +140,14 @@ class Player:
         return dx, dy
 
     def handle_collision_with_other_player(self, dx, dy, other: "Player"):
+        if other.is_dead():
+            return dx, dy
+        player_rect = pygame.Rect(self.rect)
+        player_rect.move_ip(dx, dy)
+        if player_rect.colliderect(other.rect) and self.is_in_dash():
+            if (not other.is_in_dash()) or (other.is_in_dash() and other.dash < self.dash):
+                other.die()
+                return dx, dy
         return self.handle_collision_with_rect(dx, dy, other.rect)
 
     def handle_collision_with_enemy_flag(self, **kwargs):

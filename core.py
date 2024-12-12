@@ -8,6 +8,7 @@ class Core:
     def __init__(self):
         self.map = None
         self.collides = []
+        self.thorns = []
         self.teams = {
             "red": Team(Player("red"), None),
             "blue": Team(Player("blue"), None)
@@ -27,11 +28,13 @@ class Core:
         background = renderer.draw_background_for_map(self.map)
         for platform in self.collides:
             platform.move_ip(background[2])
+        for thorn in self.thorns:
+            thorn.move_ip(background[2])
         for team_name in self.teams:
             team = self.teams[team_name]
             team.flag.shift(background[2])
-            team.player.rect.move_ip(team.flag.get_init_cords())
-            team.player.rect.move_ip(0, -64)
+            x, y = team.flag.get_init_cords()
+            team.player.spawn(spawn_x=x, spawn_y=y-64)
         self.is_game = True
         return background
 
@@ -39,6 +42,8 @@ class Core:
         self.map = gmap
         for platform in gmap.platforms:
             self.collides.append(platform.rect)
+        for thorn in gmap.thorns:
+            self.thorns.append(thorn.rect)
         for flag in gmap.flags:
             res = gmap.flags[flag]
             self.teams[flag].flag = Flag(res[0]*32, 32*res[1], flag)

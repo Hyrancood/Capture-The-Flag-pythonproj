@@ -71,6 +71,8 @@ class Player:
         self.second_ability=None
         self.speed=3.7
         self.velocity=vector.Vector()
+        self.carried_flag = None
+        self.winner = False
 
     def set_abilities(self,abilities):
         for i1 in range(len(abilities)):
@@ -85,12 +87,19 @@ class Player:
 
     def die(self):
         self.dead = 60 * 5
+        if self.carried_flag is not None:
+            self.carried_flag.is_carried = False
+            self.carried_flag = None
 
     def blit_on_screen(self, screen):
         surf = pygame.Surface((self.rect.width, self.rect.height))
-        surf.fill((255, 255, 0))
-        surf.set_alpha(200)
+        surf.fill((200 if self.color == "red" else 0, 180, 255 if self.color == "blue" else 0))
         screen.blit(surf, self.rect)
+        if self.carried_flag is not None:
+            surf = pygame.Surface((16, 16))
+            surf.fill((255, 0, 0) if self.carried_flag.color == "red" else (0, 0, 255))
+            x, y = self.rect.topleft
+            screen.blit(surf, (x + 8, y - 16))
 
     def drawn_respawn_time_on_screen(self, screen, font: pygame.font.Font):
         screen.blit(font.render(str(int(self.dead//60)), False, (0,0,0)),
@@ -126,7 +135,6 @@ class Player:
         self.velocity=vector.Vector()
         self.dash = 0
         for button in self.movement_buttons.values():
-            print(button)
             button.is_pressed = False
 
     def update(self,**kwargs):
@@ -218,6 +226,17 @@ class Player:
 
     def handle_collision_with_enemy_flag(self, **kwargs):
         dx, dy = kwargs['dx'], kwargs['dy']
+        player_rect = pygame.Rect(self.rect)
+        player_rect.move_ip(dx, dy)
+        enemy_flag = kwargs['teams']['red' if self.color == 'blue' else 'blue'].flag
+        team_flag = kwargs['teams']['red' if self.color == 'red' else 'blue'].flag
+        if enemy_flag.is_carried:
+            if player_rect.colliderect(team_flag.rect):
+                self.winner = True
+        else:
+            if player_rect.colliderect(enemy_flag.rect):
+                enemy_flag.is_carried = True
+                self.carried_flag = enemy_flag
         return dx, dy
 
     def handle_movement(self, **kwargs):

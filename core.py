@@ -75,10 +75,12 @@ class Flag:
         :param x: x-координата 'ячейки' в которой находится флаг
         :param y: y-координата 'ячейки' в которой находится флаг
         """
+        self.color = color
         self.init_x, self.init_y = x, y - 16
         self.rect = pygame.Rect(x + 8, y - 16, 16, 48)
         self.sprite = pygame.Surface((16, 48))
         self.sprite.fill((255, 0, 0) if color == "red" else (0, 0, 255))
+        self.is_carried = False
 
     def shift(self, offset):
         self.init_x += offset[0]
@@ -95,7 +97,8 @@ class Flag:
         return self.init_x, self.init_y
 
     def render_at(self, screen):
-        screen.blit(self.sprite, self.rect)
+        if not self.is_carried:
+            screen.blit(self.sprite, self.rect)
 
 
 

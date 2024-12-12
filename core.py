@@ -8,6 +8,7 @@ class Core:
     def __init__(self):
         self.map = None
         self.collides = []
+        self.thorns = []
         self.teams = {
             "red": Team(Player("red"), None),
             "blue": Team(Player("blue"), None)
@@ -27,11 +28,13 @@ class Core:
         background = renderer.draw_background_for_map(self.map)
         for platform in self.collides:
             platform.move_ip(background[2])
+        for thorn in self.thorns:
+            thorn.move_ip(background[2])
         for team_name in self.teams:
             team = self.teams[team_name]
             team.flag.shift(background[2])
-            team.player.rect.move_ip(team.flag.get_init_cords())
-            team.player.rect.move_ip(0, -64)
+            x, y = team.flag.get_init_cords()
+            team.player.spawn(spawn_x=x, spawn_y=y-64)
         self.is_game = True
         return background
 
@@ -39,6 +42,8 @@ class Core:
         self.map = gmap
         for platform in gmap.platforms:
             self.collides.append(platform.rect)
+        for thorn in gmap.thorns:
+            self.thorns.append(thorn.rect)
         for flag in gmap.flags:
             res = gmap.flags[flag]
             self.teams[flag].flag = Flag(res[0]*32, 32*res[1], flag)
@@ -70,10 +75,12 @@ class Flag:
         :param x: x-координата 'ячейки' в которой находится флаг
         :param y: y-координата 'ячейки' в которой находится флаг
         """
+        self.color = color
         self.init_x, self.init_y = x, y - 16
         self.rect = pygame.Rect(x + 8, y - 16, 16, 48)
         self.sprite = pygame.Surface((16, 48))
         self.sprite.fill((255, 0, 0) if color == "red" else (0, 0, 255))
+        self.is_carried = False
 
     def shift(self, offset):
         self.init_x += offset[0]
@@ -90,7 +97,8 @@ class Flag:
         return self.init_x, self.init_y
 
     def render_at(self, screen):
-        screen.blit(self.sprite, self.rect)
+        if not self.is_carried:
+            screen.blit(self.sprite, self.rect)
 
 
 

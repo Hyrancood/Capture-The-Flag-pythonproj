@@ -19,8 +19,10 @@ class Map:
                 for y in plat.get_y_range_for_map(self):
                     self.map[y][x] = 1
             self.platforms.append(plat)
+        self.thorns = []
         for thorns in data.get('thorns', []):
             self.map[self.sizes['y'] - thorns['y']][thorns['x'] - 1] = 2
+            self.thorns.append(Platform(**thorns, map_y=self.sizes['y']))
         self.flags = {}
         for flag in data['flags']:
             color, x, y = flag['color'], flag['x'] - 1, self.sizes['y'] -  flag['y']

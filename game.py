@@ -33,7 +33,7 @@ def run(**kwargs):
         surf.fill((255, 255, 0))
         surf.set_alpha(200)
         screen.blit(surf, team_player_rect)
-        team.player.update(**kwargs, platforms=core.instance.collides)
+        team.player.update(**kwargs, platforms=core.instance.collides, teams=core.instance.teams)
 
     pygame.display.update(BG[3])
     kwargs["clock"].tick(60)

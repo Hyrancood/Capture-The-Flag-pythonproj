@@ -6,6 +6,54 @@ DASH_POWER = 7
 DASH_COOLDOWN = 60*7 #60 fps
 DASH_DURATION = 14 #frames
 
+class Button:
+    def __init__(self):
+        self.is_pressed = False
+
+    def pressed(self, player: "Player", **kwargs):
+        if not self.is_pressed:
+            self.is_pressed = True
+            return True
+        return False
+
+    def unpressed(self, player: "Player"):
+        if self.is_pressed:
+            self.is_pressed = False
+            return True
+        return False
+
+class LeftButton(Button):
+    def pressed(self, player: "Player", **kwargs):
+        if super().pressed(player):
+            self.speed = player.speed
+            player.velocity.x -= player.speed
+
+    def unpressed(self, player: "Player"):
+        if super().unpressed(player):
+            player.velocity.x += self.speed
+
+class RightButton(Button):
+    def pressed(self, player: "Player", **kwargs):
+        if super().pressed(player):
+            self.speed = player.speed
+            player.velocity.x += player.speed
+
+    def unpressed(self, player: "Player", **kwargs):
+        if super().unpressed(player):
+            player.velocity.x -= self.speed
+
+class UpButton(Button):
+    def pressed(self, player: "Player", **kwargs):
+        if super().pressed(player) and player.is_stand(**kwargs):
+            player.velocity.y -= player.speed*2.3
+
+class DashButton(Button):
+    def pressed(self, player: "Player", **kwargs):
+        if super().pressed(player) and player.velocity.x != 0 and player.dash == 0:
+            mode = 1 if player.velocity.x > 0 else -1
+            player.velocity.x += player.speed * DASH_POWER * mode
+            player.dash = DASH_COOLDOWN * mode
+
 
 class Player:
     def __init__(self,chosen_color):
@@ -15,9 +63,9 @@ class Player:
         self.dash = 0
         self.dead = 0
         if self.color=='red':
-            self.movement_buttons = {1073741903:'right', 1073741904:'left', 1073741906:'up', 1073741905: "dash"}
+            self.movement_buttons = {1073741903: RightButton(), 1073741904: LeftButton(), 1073741906: UpButton(), 1073741905: DashButton()}
         else:
-            self.movement_buttons = {100:'right', 97:'left', 119:'up', 115: "dash"}
+            self.movement_buttons = {100: RightButton(), 97: LeftButton(), 119: UpButton(), 115: DashButton()}
         self.rect=pygame.Rect(0,0,32,64)
         self.first_ability=None
         self.second_ability=None
@@ -44,6 +92,10 @@ class Player:
         surf.set_alpha(200)
         screen.blit(surf, self.rect)
 
+    def drawn_respawn_time_on_screen(self, screen, font: pygame.font.Font):
+        screen.blit(font.render(str(int(self.dead//60)), False, (0,0,0)),
+                    (self.spawn_point[0]+5, self.spawn_point[1]))
+
     def set_position(self,x_set,y_set):
         self.rect.move(x_set, y_set)
 
@@ -60,6 +112,10 @@ class Player:
         player_rect.move_ip(0, 1)
         return not self.rect.colliderect(other.rect) and player_rect.colliderect(other.rect)
 
+    def is_stand(self, **kwargs):
+        return (self.is_on_ground(kwargs['platforms']) or
+                self.is_standing_on_other_player(self.opposite(kwargs['teams'])))
+
     def is_in_dash(self):
         return abs(self.dash) > DASH_COOLDOWN - DASH_DURATION
 
@@ -69,6 +125,9 @@ class Player:
         self.rect = pygame.Rect(self.spawn_point, (32, 64))
         self.velocity=vector.Vector()
         self.dash = 0
+        for button in self.movement_buttons.values():
+            print(button)
+            button.is_pressed = False
 
     def update(self,**kwargs):
         #self.handle_events(kwargs['events'])
@@ -76,6 +135,8 @@ class Player:
             self.dead -= 1
             if self.dead == 0:
                 self.spawn(**kwargs)
+            else:
+                self.drawn_respawn_time_on_screen(kwargs['screen'], kwargs['font'])
         else:
             self.handle_movement(**kwargs)
             if self.rect.collidelist(kwargs['thorns']) >= 0:
@@ -83,30 +144,22 @@ class Player:
             self.blit_on_screen(kwargs['screen'])
 
     def calculate_velocity(self, **kwargs):
-        on_ground = (self.is_on_ground(kwargs['platforms']) or
-                     self.is_standing_on_other_player(self.opposite(kwargs['teams'])))
+        on_ground = self.is_stand(**kwargs)
         if not on_ground:
             self.velocity.y += G_ACCELERATION
         else:
             self.velocity.y = 0
         for event in kwargs['events']:
             if event.type == pygame.KEYDOWN:
-                key = self.movement_buttons.get(event.key)
-                if key == 'right':
-                    self.velocity.x += self.speed
-                if key == 'left':
-                    self.velocity.x -= self.speed
-                if key == 'up' and on_ground:
-                    self.velocity.y -= self.speed * 2.3
-                if key == "dash" and self.velocity.x != 0 and self.dash == 0:
-                    mode = 1 if self.velocity.x > 0 else -1
-                    self.velocity.x += self.speed * DASH_POWER * mode
-                    self.dash = DASH_COOLDOWN * mode
+                button = self.movement_buttons.get(event.key)
+                #print(button)
+                if button is not None:
+                    print(button, button.is_pressed)
+                    button.pressed(self, **kwargs)
             if event.type == pygame.KEYUP:
-                if self.movement_buttons.get(event.key) == 'right':
-                    self.velocity.x -= self.speed
-                if self.movement_buttons.get(event.key) == 'left':
-                    self.velocity.x += self.speed
+                button = self.movement_buttons.get(event.key)
+                if button is not None:
+                    button.unpressed(self)
         if self.dash != 0:
             mode = 1 if self.dash > 0 else -1
             if self.is_in_dash():

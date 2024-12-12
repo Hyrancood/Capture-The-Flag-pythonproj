@@ -28,11 +28,11 @@ def run(**kwargs):
         team = core.instance.teams[team_name]
         #team.player.tick(kwargs)
         team.player.update(**kwargs,
-                           platforms=core.instance.collides,
-                           teams=core.instance.teams,
-                           thorns=core.instance.thorns)
+                           platforms = core.instance.collides,
+                           teams = core.instance.teams,
+                           thorns = core.instance.thorns,
+                           area = BG[3])
         team.flag.render_at(screen)
-
     pygame.display.update(BG[3])
     kwargs["clock"].tick(60)
     return "GAME"

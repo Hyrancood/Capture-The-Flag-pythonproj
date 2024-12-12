@@ -143,23 +143,24 @@ class Player:
                 self.die()
             self.blit_on_screen(kwargs['screen'])
 
+    def handle_movement_buttons(self, **kwargs):
+        for event in kwargs['events']:
+            if event.type == pygame.KEYDOWN:
+                button = self.movement_buttons.get(event.key)
+                if button is not None:
+                    button.pressed(self, **kwargs)
+            if event.type == pygame.KEYUP:
+                button = self.movement_buttons.get(event.key)
+                if button is not None:
+                    button.unpressed(self)
+
     def calculate_velocity(self, **kwargs):
         on_ground = self.is_stand(**kwargs)
         if not on_ground:
             self.velocity.y += G_ACCELERATION
         else:
             self.velocity.y = 0
-        for event in kwargs['events']:
-            if event.type == pygame.KEYDOWN:
-                button = self.movement_buttons.get(event.key)
-                #print(button)
-                if button is not None:
-                    print(button, button.is_pressed)
-                    button.pressed(self, **kwargs)
-            if event.type == pygame.KEYUP:
-                button = self.movement_buttons.get(event.key)
-                if button is not None:
-                    button.unpressed(self)
+        self.handle_movement_buttons(**kwargs)
         if self.dash != 0:
             mode = 1 if self.dash > 0 else -1
             if self.is_in_dash():
@@ -186,6 +187,18 @@ class Player:
                 player_rect.left = rect.right
         return dx, dy
 
+    def handle_collision_with_map_borders(self, dx, dy, **kwargs):
+        area = kwargs['area']
+        borders = [
+            pygame.Rect(area.left, area.top-1, area.width, 1),
+            pygame.Rect(area.left-1, area.top, 1, area.height),
+            pygame.Rect(area.left, area.bottom, area.width, 1),
+            pygame.Rect(area.right, area.top, 1, area.height),
+        ]
+        for border in borders:
+            dx, dy = self.handle_collision_with_rect(dx, dy, border)
+        return dx, dy
+
     def handle_collisions_with_platforms(self, **kwargs):
         dx, dy = kwargs['dx'], kwargs['dy']
         for platform in kwargs['platforms']:
@@ -210,6 +223,7 @@ class Player:
     def handle_movement(self, **kwargs):
         self.calculate_velocity(**kwargs)
         dx, dy = self.velocity.x, self.velocity.y
+        dx, dy = self.handle_collision_with_map_borders(**kwargs, dx=dx, dy=dy)
         dx, dy = self.handle_collisions_with_platforms(**kwargs, dx=dx, dy=dy)
         dx, dy = self.handle_collision_with_other_player(dx, dy, self.opposite(kwargs['teams']))
         dx, dy = self.handle_collision_with_enemy_flag(**kwargs, dx=dx, dy=dy)

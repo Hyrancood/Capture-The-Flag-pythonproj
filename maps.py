@@ -42,7 +42,6 @@ def draw_error_button(screen: pygame.Surface, font: pygame.font.Font, filename: 
 
 def update_maps(screen: pygame.Surface, font: pygame.font.Font):
     global MAPS, index, CAN_PLAY
-    print("!!")
     index = 0
     MAPS = []
     y = 51
@@ -128,6 +127,9 @@ def run(**kwargs):
                         open_maps_folder()
                     elif btn == 1 and CAN_PLAY:
                         core.instance.set_map(MAPS[index][2][1])
+                        MAPS = None
+                        MODE = "CHOOSE_MAP"
+                        CAN_PLAY = False
                         return "GAME"
                     elif btn == 2:
                         update_maps(screen, font)

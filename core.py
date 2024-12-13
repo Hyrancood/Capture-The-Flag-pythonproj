@@ -14,6 +14,7 @@ class Core:
             "blue": Team(Player("blue"), None)
         }
         self.is_game = False
+        self.winner = None
 
     def start_game(self):
         """

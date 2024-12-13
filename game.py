@@ -32,11 +32,6 @@ def game(**kwargs):
         pygame.display.flip()
 
     screen.blit(BG[1], BG[2])
-    for platform in core.instance.collides:
-        surf = pygame.Surface((platform.width, platform.height))
-        surf.fill((255, 0, 128))
-        surf.set_alpha(200)
-        screen.blit(surf, platform)
     for team_name in core.instance.teams:
         team = core.instance.teams[team_name]
         team.player.update(**kwargs,

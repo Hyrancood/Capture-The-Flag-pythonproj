@@ -10,7 +10,7 @@ def run(**kwargs):
 	global i
 	for event in kwargs["events"]:
 		if event.type == pygame.KEYDOWN:
-			print(f"KEYDOWN: {event}")
+			#print(f"KEYDOWN: {event}")
 			if event.key == 13 or event.unicode == '\r':
 				return NEXT[i % 2]
 			if event.key in (9, 1073741905, 1073741906) or event.unicode == '\t':

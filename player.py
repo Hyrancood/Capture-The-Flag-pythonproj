@@ -155,7 +155,6 @@ class Player:
             button.is_pressed = False
 
     def update(self,**kwargs):
-        #self.handle_events(kwargs['events'])
         if self.is_dead():
             self.dead -= 1
             if self.dead == 0:
@@ -168,6 +167,7 @@ class Player:
             if self.rect.collidelist(kwargs['thorns']) >= 0:
                 self.die()
             self.blit_on_screen(kwargs['screen'])
+        self.update_abilities(**kwargs)
 
     def unpush_all_movement_buttons(self):
         for button in self.movement_buttons.values():
@@ -282,7 +282,12 @@ class Player:
                 button = self.ability_buttons.get(event.key)
                 if button is not None:
                     button.unpressed(self)
+
+    def update_abilities(self, **kwargs):
+        offset = 16 if self.color == 'blue' else kwargs['area'].width - 80
         for button in self.ability_buttons.values():
             if isinstance(button, AbilityButton):
                 if button.ability is not None:
                     button.ability.consume_cooldown()
+                    button.ability.blit_on(kwargs['screen'], kwargs['area'], offset)
+                    offset += 80 if self.color == 'blue' else -80

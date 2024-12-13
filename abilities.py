@@ -3,12 +3,14 @@ from vector import Vector
 
 
 class Ability:
-    def __init__(self, cooldown: int, duration: int):
+    sprites = pygame.image.load("assets/abilities.png")
+    def __init__(self, sprite_id: int, cooldown: int, duration: int):
         self.cooldown = cooldown
         self.duration = duration
         self.ticks = 0
         self.owner = None
         self.enemy = None
+        self.sprite_id = sprite_id
 
     def set_player(self, owner, enemy):
         self.owner = owner
@@ -24,9 +26,18 @@ class Ability:
         if self.ticks > 0:
             self.ticks -= 1
 
+    def blit_on(self, screen: pygame.Surface, map_area: pygame.Rect, x_offset: int):
+        rect = pygame.Rect(0, 0, 64, 64)
+        rect.move_ip(map_area.topleft)
+        rect.move_ip(x_offset, map_area.height - 80)
+        screen.blit(Ability.sprites, rect, area=(self.sprite_id*64, 64, 64, 64))
+        percent = int(64*self.ticks/self.cooldown)
+        rect.move_ip(0, percent)
+        screen.blit(Ability.sprites, rect, area=(self.sprite_id * 64, percent, 64, 64 - percent))
+
 class Freeze(Ability):
     def __init__(self):
-        super().__init__(660, 180)
+        super().__init__(0, 660, 180)
 
     def use(self, **kwargs):
         if super().use(**kwargs):
@@ -50,7 +61,7 @@ class Freeze(Ability):
 
 class Bomb(Ability):
     def __init__(self):
-        super().__init__(900, 0)
+        super().__init__(1, 900, 0)
 
     def use(self, **kwargs):
         if super().use(**kwargs):
@@ -62,7 +73,7 @@ class Bomb(Ability):
 
 class Swap(Ability):
     def __init__(self):
-        super().__init__(660, 0)
+        super().__init__(2, 660, 0)
 
     def use(self, **kwargs):
         if super().use(**kwargs):
@@ -74,7 +85,7 @@ class Swap(Ability):
 
 class Pulling(Ability):
     def __init__(self):
-        super().__init__(720, 10)
+        super().__init__(3, 720, 10)
 
     def use(self, **kwargs):
         if super().use(**kwargs):
@@ -96,7 +107,7 @@ class Pulling(Ability):
 
 class Fireball(Ability):
     def __init__(self):
-        super().__init__(600, 180)
+        super().__init__(4, 600, 180)
         self.rect = pygame.Rect(0, 0, 24, 24)
         self.velocity = Vector()
         self.platforms = []

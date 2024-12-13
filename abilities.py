@@ -13,6 +13,7 @@ class Ability:
     def set_player(self, owner, enemy):
         self.owner = owner
         self.enemy = enemy
+        self.ticks = 0
 
     def use(self, **kwargs):
         if self.ticks == 0:
@@ -24,6 +25,9 @@ class Ability:
             self.ticks -= 1
 
 class Freeze(Ability):
+    def __init__(self):
+        super().__init__(660, 90)
+
     def use(self, **kwargs):
         if super().use(**kwargs):
             owner=self.owner
@@ -42,15 +46,21 @@ class Freeze(Ability):
 
 
 class Bomb(Ability):
+    def __init__(self):
+        super().__init__(900, 0)
+
     def use(self, **kwargs):
         if super().use(**kwargs):
             owner=self.owner
             enemy=self.enemy
             if owner.distance(enemy) <= 150 and not owner.is_dead() and not enemy.is_dead():
-                enemy.die
+                enemy.die()
                 self.ticks = self.cooldown
 
 class Swap(Ability):
+    def __init__(self):
+        super().__init__(660, 0)
+
     def use(self, **kwargs):
         if super().use(**kwargs):
             owner = self.owner
@@ -60,6 +70,9 @@ class Swap(Ability):
                 self.ticks = self.cooldown
 
 class Pulling(Ability):
+    def __init__(self):
+        super().__init__(720, 5)
+
     def use(self, **kwargs):
         if super().use(**kwargs):
             owner=self.owner
@@ -67,9 +80,9 @@ class Pulling(Ability):
             for button in enemy.movement_buttons.values():
                 if button is LeftButton or button is RightButton:
                     button.unpress()
-                self.x, self.y = owner.rect.left - enemy.rect.left, owner.rect.top - enemy.rect.top
-                enemy.velocity.x += self.x/4
-                enemy.velocity.y += self.y/4
+                self.x, self.y = (owner.rect.left - enemy.rect.left)/self.duration, (owner.rect.top - enemy.rect.top)/self.duration
+                enemy.velocity.x += self.x
+                enemy.velocity.y += self.y
                 self.ticks = self.cooldown
 
     def deactivate(self):

@@ -65,8 +65,8 @@ class Swap(Ability):
         if super().use(**kwargs):
             owner = self.owner
             enemy = self.enemy
-            if owner.distance(enemy) <= 100 and not owner.is_dead() and not enemy.is_dead():
-                owner.rect, enemy.rect = enemy.rect, owner.rect
+            if owner.distance(enemy) <= 300 and not owner.is_dead() and not enemy.is_dead():
+                owner.rect, enemy.rect = pygame.Rect(enemy.rect), pygame.Rect(owner.rect)
                 self.ticks = self.cooldown
 
 class Pulling(Ability):

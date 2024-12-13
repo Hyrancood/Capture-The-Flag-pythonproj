@@ -77,13 +77,11 @@ class Pulling(Ability):
         if super().use(**kwargs):
             owner=self.owner
             enemy=self.enemy
-            for button in enemy.movement_buttons.values():
-                if button is LeftButton or button is RightButton:
-                    button.unpress()
-                self.x, self.y = (owner.rect.left - enemy.rect.left)/self.duration, (owner.rect.top - enemy.rect.top)/self.duration
-                enemy.velocity.x += self.x
-                enemy.velocity.y += self.y
-                self.ticks = self.cooldown
+            enemy.unpush_all_movement_buttons()
+            self.x, self.y = (owner.rect.left - enemy.rect.left)/self.duration, (owner.rect.top - enemy.rect.top)/self.duration
+            enemy.velocity.x += self.x
+            enemy.velocity.y += self.y
+            self.ticks = self.cooldown
 
     def deactivate(self):
         self.enemy.velocity.x -= self.x

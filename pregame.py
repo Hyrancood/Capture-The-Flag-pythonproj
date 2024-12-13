@@ -94,14 +94,14 @@ def run(**kwargs):
 		red, blue = core.instance.teams['red'].player, core.instance.teams['blue'].player
 		blue_abilities = []
 		for button in left_buttons:
-			if button is AbilityButton:
+			if isinstance(button, AbilityButton):
 				if button.is_pushed:
 					button.ability.set_player(blue, red)
-					left_abilities.append(button.ability)
+					blue_abilities.append(button.ability)
 		blue.set_abilities(blue_abilities)
 		red_abilities = []
 		for button in right_buttons:
-			if button is AbilityButton:
+			if isinstance(button, AbilityButton):
 				if button.is_pushed:
 					button.ability.set_player(red, blue)
 					red_abilities.append(button.ability)

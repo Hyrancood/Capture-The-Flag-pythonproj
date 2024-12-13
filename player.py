@@ -1,3 +1,4 @@
+import abilities
 import vector
 import pygame
 
@@ -54,6 +55,18 @@ class DashButton(Button):
             player.velocity.x += player.speed * DASH_POWER * mode
             player.dash = DASH_COOLDOWN * mode
 
+class AbilityButton(Button):
+    def __init__(self):
+        super().__init__()
+        self.ability = None
+
+    def set_ability(self, ability: abilities.Ability):
+        self.ability = ability
+
+    def pressed(self, player: "Player", **kwargs):
+        if super().pressed(player, **kwargs) and self.ability is not None:
+            print(self.ability)
+            self.ability.use(**kwargs)
 
 class Player:
     def __init__(self,chosen_color):
@@ -64,23 +77,22 @@ class Player:
         self.dead = 0
         if self.color=='red':
             self.movement_buttons = {1073741903: RightButton(), 1073741904: LeftButton(), 1073741906: UpButton(), 1073741905: DashButton()}
+            self.ability_buttons = {1073742053: AbilityButton(), 1073742050: AbilityButton()}
         else:
             self.movement_buttons = {100: RightButton(), 97: LeftButton(), 119: UpButton(), 115: DashButton()}
+            self.ability_buttons = {101: AbilityButton(), 113: AbilityButton()}
         self.rect=pygame.Rect(0,0,32,64)
-        self.first_ability=None
-        self.second_ability=None
         self.speed=3.7
         self.velocity=vector.Vector()
         self.carried_flag = None
         self.winner = False
 
-    def set_abilities(self,abilities):
-        for i1 in range(len(abilities)):
-            if abilities[i1] == 1:
-                self.first_ability=i1
-                for i2 in range(i1+1,len(abilities)):
-                    if abilities[i2] == 1:
-                        self.second_ability=i2
+    def set_abilities(self, chosen_abilities):
+        i = 0
+        for item in self.ability_buttons.items():
+            if i < len(chosen_abilities):
+                item[1].set_ability(chosen_abilities[i])
+                i += 1
 
     def is_dead(self):
         return self.dead > 0
@@ -136,6 +148,8 @@ class Player:
         self.dash = 0
         for button in self.movement_buttons.values():
             button.is_pressed = False
+        for button in self.ability_buttons.values():
+            button.is_pressed = False
 
     def update(self,**kwargs):
         #self.handle_events(kwargs['events'])
@@ -147,6 +161,7 @@ class Player:
                 self.drawn_respawn_time_on_screen(kwargs['screen'], kwargs['font'])
         else:
             self.handle_movement(**kwargs)
+            self.handle_abilities(**kwargs)
             if self.rect.collidelist(kwargs['thorns']) >= 0:
                 self.die()
             self.blit_on_screen(kwargs['screen'])
@@ -249,3 +264,14 @@ class Player:
         self.rect.move_ip(dx, dy)
         if dy > self.velocity.y:
             self.velocity.y = 0
+
+    def handle_abilities(self, **kwargs):
+        for event in kwargs['events']:
+            if event.type == pygame.KEYDOWN:
+                button = self.ability_buttons.get(event.key)
+                if button is not None:
+                    button.pressed(self, **kwargs)
+            if event.type == pygame.KEYUP:
+                button = self.ability_buttons.get(event.key)
+                if button is not None:
+                    button.unpressed(self)

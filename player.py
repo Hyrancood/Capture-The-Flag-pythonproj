@@ -39,7 +39,7 @@ class RightButton(Button):
             self.speed = player.speed
             player.velocity.x += player.speed
 
-    def unpressed(self, player: "Player", **kwargs):
+    def unpressed(self, player: "Player"):
         if super().unpressed(player):
             player.velocity.x -= self.speed
 
@@ -93,6 +93,10 @@ class Player:
             if i < len(chosen_abilities):
                 item[1].set_ability(chosen_abilities[i])
                 i += 1
+
+    def distance(self, other: "Player"):
+        return (abs(self.rect.top - other.rect.top)**2 +
+                abs(self.rect.left - other.rect.top)**2)**0.5
 
     def is_dead(self):
         return self.dead > 0
@@ -165,6 +169,10 @@ class Player:
             if self.rect.collidelist(kwargs['thorns']) >= 0:
                 self.die()
             self.blit_on_screen(kwargs['screen'])
+
+    def unpush_all_movement_buttons(self):
+        for button in self.movement_buttons.values():
+            button.unpressed(self)
 
     def handle_movement_buttons(self, **kwargs):
         for event in kwargs['events']:

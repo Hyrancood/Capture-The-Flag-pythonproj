@@ -103,6 +103,8 @@ class Fireball(Ability):
         self.can_damage = False
         self.surface = None
         self.screen = None
+        self.surface = pygame.Surface((24, 24))
+        self.surface.fill((255, 64, 64))
 
     def use(self, **kwargs):
         if super().use(**kwargs):
@@ -112,17 +114,16 @@ class Fireball(Ability):
             self.ticks = self.cooldown
             self.can_damage = True
             self.screen = kwargs['screen']
-            self.surface = pygame.Surface((24, 24))
+            self.rect = pygame.Rect(self.owner.rect.topleft, (24, 24))
+            self.rect.move_ip(4, 4)
 
     def consume_cooldown(self):
         super().consume_cooldown()
-        if not self.can_damage:
-            return
-        if self.ticks == self.cooldown - self.duration:
+        if (not self.can_damage) or self.ticks == self.cooldown - self.duration:
             self.can_damage = False
             return
         self.rect.move_ip(self.velocity.x, self.velocity.y)
-        if self.rect.collidelist(self.platforms):
+        if self.rect.collidelist(self.platforms) > -1:
             self.can_damage = False
         if self.can_damage:
             self.screen.blit(self.surface, self.rect)

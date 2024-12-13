@@ -26,7 +26,7 @@ class Ability:
 
 class Freeze(Ability):
     def __init__(self):
-        super().__init__(660, 90)
+        super().__init__(660, 180)
 
     def use(self, **kwargs):
         if super().use(**kwargs):
@@ -34,9 +34,11 @@ class Freeze(Ability):
             enemy=self.enemy
             if owner.distance(enemy) <= 200 and not owner.is_dead() and not enemy.is_dead():
                 self.enemy.speed/=2
+                self.enemy.velocity.x /= 2
                 self.ticks = self.cooldown
 
     def deactivate(self):
+        self.enemy.velocity.x *= 2
         self.enemy.speed *= 2
 
     def consume_cooldown(self):

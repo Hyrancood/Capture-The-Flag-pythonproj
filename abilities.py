@@ -34,11 +34,12 @@ class Freeze(Ability):
             enemy=self.enemy
             if owner.distance(enemy) <= 200 and not owner.is_dead() and not enemy.is_dead():
                 self.enemy.speed/=2
-                self.enemy.velocity.x /= 2
+                self.minus = self.enemy.velocity.x / 2
+                self.enemy.velocity.x -= self.minus
                 self.ticks = self.cooldown
 
     def deactivate(self):
-        self.enemy.velocity.x *= 2
+        self.enemy.velocity.x += self.minus
         self.enemy.speed *= 2
 
     def consume_cooldown(self):
@@ -55,7 +56,7 @@ class Bomb(Ability):
         if super().use(**kwargs):
             owner=self.owner
             enemy=self.enemy
-            if owner.distance(enemy) <= 150 and not owner.is_dead() and not enemy.is_dead():
+            if owner.distance(enemy) <= 200 and not owner.is_dead() and not enemy.is_dead():
                 enemy.die()
                 self.ticks = self.cooldown
 
@@ -73,16 +74,15 @@ class Swap(Ability):
 
 class Pulling(Ability):
     def __init__(self):
-        super().__init__(720, 5)
+        super().__init__(720, 10)
 
     def use(self, **kwargs):
         if super().use(**kwargs):
-            owner=self.owner
-            enemy=self.enemy
-            enemy.unpush_all_movement_buttons()
-            self.x, self.y = (owner.rect.left - enemy.rect.left)/self.duration, (owner.rect.top - enemy.rect.top)/self.duration
-            enemy.velocity.x += self.x
-            enemy.velocity.y += self.y
+            self.enemy.unpush_all_movement_buttons()
+            self.x = max(-20, min(20, (self.owner.rect.left - self.enemy.rect.left)/self.duration))
+            self.y = max(-20, min(20, (self.owner.rect.top - self.enemy.rect.top)/self.duration))
+            self.enemy.velocity.x += self.x
+            self.enemy.velocity.y += self.y
             self.ticks = self.cooldown
 
     def deactivate(self):

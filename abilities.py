@@ -26,7 +26,7 @@ class Ability:
 
 class Freeze(Ability):
     def __init__(self):
-        super().__init__(660, 90)
+        super().__init__(660, 180)
 
     def use(self, **kwargs):
         if super().use(**kwargs):
@@ -34,9 +34,12 @@ class Freeze(Ability):
             enemy=self.enemy
             if owner.distance(enemy) <= 200 and not owner.is_dead() and not enemy.is_dead():
                 self.enemy.speed/=2
+                self.minus = self.enemy.velocity.x / 2
+                self.enemy.velocity.x -= self.minus
                 self.ticks = self.cooldown
 
     def deactivate(self):
+        self.enemy.velocity.x += self.minus
         self.enemy.speed *= 2
 
     def consume_cooldown(self):
@@ -53,7 +56,7 @@ class Bomb(Ability):
         if super().use(**kwargs):
             owner=self.owner
             enemy=self.enemy
-            if owner.distance(enemy) <= 150 and not owner.is_dead() and not enemy.is_dead():
+            if owner.distance(enemy) <= 200 and not owner.is_dead() and not enemy.is_dead():
                 enemy.die()
                 self.ticks = self.cooldown
 
@@ -65,22 +68,21 @@ class Swap(Ability):
         if super().use(**kwargs):
             owner = self.owner
             enemy = self.enemy
-            if owner.distance(enemy) <= 100 and not owner.is_dead() and not enemy.is_dead():
-                owner.rect, enemy.rect = enemy.rect, owner.rect
+            if owner.distance(enemy) <= 300 and not owner.is_dead() and not enemy.is_dead():
+                owner.rect, enemy.rect = pygame.Rect(enemy.rect), pygame.Rect(owner.rect)
                 self.ticks = self.cooldown
 
 class Pulling(Ability):
     def __init__(self):
-        super().__init__(720, 5)
+        super().__init__(720, 10)
 
     def use(self, **kwargs):
         if super().use(**kwargs):
-            owner=self.owner
-            enemy=self.enemy
-            enemy.unpush_all_movement_buttons()
-            self.x, self.y = (owner.rect.left - enemy.rect.left)/self.duration, (owner.rect.top - enemy.rect.top)/self.duration
-            enemy.velocity.x += self.x
-            enemy.velocity.y += self.y
+            self.enemy.unpush_all_movement_buttons()
+            self.x = max(-20, min(20, (self.owner.rect.left - self.enemy.rect.left)/self.duration))
+            self.y = max(-20, min(20, (self.owner.rect.top - self.enemy.rect.top)/self.duration))
+            self.enemy.velocity.x += self.x
+            self.enemy.velocity.y += self.y
             self.ticks = self.cooldown
 
     def deactivate(self):
@@ -101,6 +103,8 @@ class Fireball(Ability):
         self.can_damage = False
         self.surface = None
         self.screen = None
+        self.surface = pygame.Surface((24, 24))
+        self.surface.fill((255, 64, 64))
 
     def use(self, **kwargs):
         if super().use(**kwargs):
@@ -110,17 +114,16 @@ class Fireball(Ability):
             self.ticks = self.cooldown
             self.can_damage = True
             self.screen = kwargs['screen']
-            self.surface = pygame.Surface((24, 24))
+            self.rect = pygame.Rect(self.owner.rect.topleft, (24, 24))
+            self.rect.move_ip(4, 4)
 
     def consume_cooldown(self):
         super().consume_cooldown()
-        if not self.can_damage:
-            return
-        if self.ticks == self.cooldown - self.duration:
+        if (not self.can_damage) or self.ticks == self.cooldown - self.duration:
             self.can_damage = False
             return
         self.rect.move_ip(self.velocity.x, self.velocity.y)
-        if self.rect.collidelist(self.platforms):
+        if self.rect.collidelist(self.platforms) > -1:
             self.can_damage = False
         if self.can_damage:
             self.screen.blit(self.surface, self.rect)

@@ -65,7 +65,6 @@ class AbilityButton(Button):
 
     def pressed(self, player: "Player", **kwargs):
         if super().pressed(player, **kwargs) and self.ability is not None:
-            print(self.ability)
             self.ability.use(**kwargs)
 
 class Player:
@@ -77,7 +76,7 @@ class Player:
         self.dead = 0
         if self.color=='red':
             self.movement_buttons = {1073741903: RightButton(), 1073741904: LeftButton(), 1073741906: UpButton(), 1073741905: DashButton()}
-            self.ability_buttons = {1073742053: AbilityButton(), 1073742050: AbilityButton()}
+            self.ability_buttons = {1073742053: AbilityButton(), 1073742052: AbilityButton()}
         else:
             self.movement_buttons = {100: RightButton(), 97: LeftButton(), 119: UpButton(), 115: DashButton()}
             self.ability_buttons = {101: AbilityButton(), 113: AbilityButton()}
@@ -96,7 +95,7 @@ class Player:
 
     def distance(self, other: "Player"):
         return (abs(self.rect.top - other.rect.top)**2 +
-                abs(self.rect.left - other.rect.top)**2)**0.5
+                abs(self.rect.left - other.rect.left)**2)**0.5
 
     def is_dead(self):
         return self.dead > 0
@@ -283,3 +282,7 @@ class Player:
                 button = self.ability_buttons.get(event.key)
                 if button is not None:
                     button.unpressed(self)
+        for button in self.ability_buttons.values():
+            if isinstance(button, AbilityButton):
+                if button.ability is not None:
+                    button.ability.consume_cooldown()

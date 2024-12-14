@@ -1,9 +1,9 @@
+import config
 import pygame
 from vector import Vector
 
 
 class Ability:
-    sprites = pygame.image.load("assets/abilities.png")
     def __init__(self, sprite_id: int, cooldown: int, duration: int):
         self.cooldown = cooldown
         self.duration = duration
@@ -30,10 +30,10 @@ class Ability:
         rect = pygame.Rect(0, 0, 64, 64)
         rect.move_ip(map_area.topleft)
         rect.move_ip(x_offset, map_area.height - 80)
-        screen.blit(Ability.sprites, rect, area=(self.sprite_id*64, 64, 64, 64))
+        screen.blit(config.get("abilities.png"), rect, area=(self.sprite_id*64, 64, 64, 64))
         percent = int(64*self.ticks/self.cooldown)
         rect.move_ip(0, percent)
-        screen.blit(Ability.sprites, rect, area=(self.sprite_id * 64, percent, 64, 64 - percent))
+        screen.blit(config.get("abilities.png"), rect, area=(self.sprite_id * 64, percent, 64, 64 - percent))
 
 class Freeze(Ability):
     def __init__(self):

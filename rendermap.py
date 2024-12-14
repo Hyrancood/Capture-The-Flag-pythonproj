@@ -1,66 +1,57 @@
 import pygame
 import gamemap as gmap
+import config
 
 
-PLATFORMS = {
-    "ground": pygame.image.load("assets/ground/ground.png"),
-    "top": pygame.image.load("assets/ground/top_ground.png"),
-    "top-right": pygame.image.load("assets/ground/top_right_ground.png"),
-    "right": pygame.image.load("assets/ground/right_ground.png"),
-    "bottom-right": pygame.image.load("assets/ground/bottom_right_ground.png"),
-    "bottom": pygame.image.load("assets/ground/bottom_ground.png"),
-    "bottom-left": pygame.image.load("assets/ground/bottom_left_ground.png"),
-    "left": pygame.image.load("assets/ground/left_ground.png"),
-    "top-left": pygame.image.load("assets/ground/top_left_ground.png"),
-    "top-right-corner": pygame.image.load("assets/ground/top_right_corner_ground.png"),
-    "top-left-corner": pygame.image.load("assets/ground/top_left_corner_ground.png"),
-    "bottom-right-corner": pygame.image.load("assets/ground/bottom_right_corner_ground.png"),
-    "bottom-left-corner": pygame.image.load("assets/ground/bottom_left_corner_ground.png")
-}
-THORNS = pygame.image.load("assets/thorns.png")
 BG = None
 
 
+def get_platform(name):
+    name = name.replace("-", "_") + "_ground" if name != "ground" else name
+    return config.get(f"ground/{name}.png")
+
+
+
 def get_sprite(x, y, map_platforms, sizes):
-    sprite = PLATFORMS["ground"]
+    sprite = get_platform("ground")
     if y - 1 >= 0 and x + 1 < sizes[0]:
         if map_platforms[y - 1][x] and map_platforms[y][x+1] and not map_platforms[y-1][x+1]:
-            return PLATFORMS["top-right-corner"]
+            return get_platform("top-right-corner")
     if y - 1 >= 0 and x - 1 >= 0:
         if map_platforms[y - 1][x] and map_platforms[y][x-1] and not map_platforms[y-1][x-1]:
-            return PLATFORMS["top-left-corner"]
+            return get_platform("top-left-corner")
     if y + 1 < sizes[1] and x + 1 < sizes[0]:
         if map_platforms[y + 1][x] and map_platforms[y][x+1] and not map_platforms[y+1][x+1]:
-            return PLATFORMS["bottom-right-corner"]
+            return get_platform("bottom-right-corner")
     if y + 1 < sizes[1] and x - 1 >= 0:
         if map_platforms[y + 1][x] and map_platforms[y][x-1] and not map_platforms[y+1][x-1]:
-            return PLATFORMS["bottom-left-corner"]
+            return get_platform("bottom-left-corner")
     if y - 1 >= 0:
         if not map_platforms[y - 1][x]:
-            sprite = PLATFORMS["top"]
+            sprite = get_platform("top")
             if x + 1 < sizes[0]:
                 if not map_platforms[y][x + 1]:
-                    sprite = PLATFORMS["top-right"]
+                    sprite = get_platform("top-right")
             if x - 1 >= 0:
                 if not map_platforms[y][x - 1]:
-                    sprite = PLATFORMS["top-left"]
+                    sprite = get_platform("top-left")
             return sprite
     if y + 1 < sizes[1]:
         if not map_platforms[y + 1][x]:
-            sprite = PLATFORMS["bottom"]
+            sprite = get_platform("bottom")
             if x + 1 < sizes[0]:
                 if not map_platforms[y][x + 1]:
-                    sprite = PLATFORMS["bottom-right"]
+                    sprite = get_platform("bottom-right")
             if x - 1 >= 0:
                 if not map_platforms[y][x - 1]:
-                    sprite = PLATFORMS["bottom-left"]
+                    sprite = get_platform("bottom-left")
             return sprite
     if x + 1 < sizes[0]:
         if not map_platforms[y][x+1]:
-            sprite = PLATFORMS["right"]
+            sprite = get_platform("right")
     if x - 1 >= 0:
         if not map_platforms[y][x-1]:
-            sprite = PLATFORMS["left"]
+            sprite = get_platform("left")
     return sprite
 
 
@@ -82,7 +73,7 @@ def map_surface(gamemap: gmap.Map):
             if gamemap.map[y][x] == 1:
                 surface.blit(get_sprite(x, y, platforms_only, sizes), (x * 32, y * 32))
             if gamemap.map[y][x] == 2:
-                surface.blit(THORNS, (x * 32, y * 32))
+                surface.blit(config.get("thorns.png"), (x * 32, y * 32))
     return surface
 
 

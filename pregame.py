@@ -1,13 +1,13 @@
 import pygame
 import player, abilities, core
-from abilities import Freeze
+import config
 
 
 class Button:
 	def __init__(self, sprite: str, sprite_pushed: str):
 		self.is_pushed = False
-		self.sprite = pygame.image.load(sprite)
-		self.sprite_pushed = pygame.image.load(sprite_pushed)
+		self.sprite = config.get(sprite)
+		self.sprite_pushed = config.get(sprite_pushed)
 
 	def press(self):
 		self.is_pushed = True
@@ -21,32 +21,36 @@ class Button:
 
 class AbilityButton(Button):
 	def __init__(self, id: int, ability: abilities.Ability):
-		super().__init__(f"assets/ability{id}.png", f"assets/ability{id}_pushed.png")
+		super().__init__(f"ability{id}.png", f"ability{id}_pushed.png")
 		self.ability = ability
 
 
 
-background = pygame.image.load("assets/main_menu_bg.png")
-left_buttons = [
-	Button("assets/start.png", "assets/start_pushed.png"),
-	AbilityButton(1, abilities.Freeze()),
-	AbilityButton(2, abilities.Bomb()),
-	AbilityButton(3, abilities.Swap()),
-	AbilityButton(4, abilities.Pulling()),
-	AbilityButton(5, abilities.Fireball()),
-	0
-]
-right_buttons = [
-	Button("assets/start.png", "assets/start_pushed.png"),
-	AbilityButton(1, abilities.Freeze()),
-	AbilityButton(2, abilities.Bomb()),
-	AbilityButton(3, abilities.Swap()),
-	AbilityButton(4, abilities.Pulling()),
-	AbilityButton(5, abilities.Fireball()),
-	0
-]
+
+left_buttons = None
+right_buttons = None
 i, j = 0, 0
 #номер выбранной кнопки слева и справа соответственно
+
+def load_assets():
+	global left_buttons, right_buttons
+	left_buttons = [
+		Button("start.png", "start_pushed.png"),
+		AbilityButton(1, abilities.Freeze()),
+		AbilityButton(2, abilities.Bomb()),
+		AbilityButton(3, abilities.Swap()),
+		AbilityButton(4, abilities.Pulling()),
+		AbilityButton(5, abilities.Fireball()), 0
+	]
+	right_buttons = [
+		Button("start.png", "start_pushed.png"),
+		AbilityButton(1, abilities.Freeze()),
+		AbilityButton(2, abilities.Bomb()),
+		AbilityButton(3, abilities.Swap()),
+		AbilityButton(4, abilities.Pulling()),
+		AbilityButton(5, abilities.Fireball()), 0
+	]
+
 
 def run(**kwargs):
 	global i, j, left_buttons, right_buttons
@@ -111,7 +115,7 @@ def run(**kwargs):
 		left_buttons[6], right_buttons[6] = 0, 0
 		return "MAPS"
 	screen = kwargs["screen"]
-	screen.blit(background, (0, 0))
+	screen.blit(config.get("main_menu_bg.png"), (0, 0))
 
 	array = ((left_buttons, i, 130), (right_buttons, j, 840))
 	for buttons in array:

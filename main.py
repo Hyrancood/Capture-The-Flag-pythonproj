@@ -1,22 +1,23 @@
 import pygame
+import config
 
-background = pygame.image.load("assets/main_menu_bg.png")
-play_button = pygame.image.load("assets/play.png")
-replays_button = pygame.image.load("assets/replays.png")
+
 i = 0
 NEXT = ["PREGAME", "REPLAYS"]
+
 
 def run(**kwargs):
 	global i
 	for event in kwargs["events"]:
 		if event.type == pygame.KEYDOWN:
-			#print(f"KEYDOWN: {event}")
 			if event.key == 13 or event.unicode == '\r':
 				return NEXT[i % 2]
 			if event.key in (9, 1073741905, 1073741906) or event.unicode == '\t':
 				i += 1
 	screen = kwargs["screen"]
-	screen.blit(background, (0, 0))
+	screen.blit(config.get("main_menu_bg.png"), (0, 0))
+	play_button = config.get("play.png")
+	replays_button = config.get("replays.png")
 	if i % 2 == 0:
 		play_button.set_alpha(255)
 		replays_button.set_alpha(200)

@@ -1,4 +1,5 @@
 import gamemap as gmap
+import config
 
 
 def parse_value(value):
@@ -243,7 +244,7 @@ def from_file(path) -> gmap.Map:
 
 
 if __name__ == "__main__":
-    mp = from_file("maps/default.ctfmap")
+    mp = from_file(f"{config.INSTANCE.maps}/default.ctfmap")
     print(f"Name: {mp.name['ru']}")
     print(f"Sizes: {mp.sizes['x']}x{mp.sizes['y']}")
     print("Map:")

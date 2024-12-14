@@ -1,15 +1,12 @@
 import pygame
 import pathlib, subprocess
 import readmap, core
+import config
 import gamemap as gmap
 
 
-background = pygame.image.load("assets/maps_menu_bg.png")
-map_choose = pygame.image.load("assets/map_choose_button.png")
-map_error = pygame.image.load("assets/map_choose_error_button.png")
-folder_button = pygame.image.load("assets/open_maps_folder.png")
-reload_button = pygame.image.load("assets/reload_maps_button.png")
-play_button = pygame.image.load("assets/maps_menu_play_button.png")
+background = None
+reload_button = None
 
 MAPS = None
 NEXT_MODE = {"CHOOSE_MAP": "BUTTONS", "BUTTONS": "CHOOSE_MAP"}
@@ -20,7 +17,7 @@ btn = 1
 
 
 def draw_map_button(screen: pygame.Surface, gamemap: gmap.Map, font: pygame.font.Font, y: int, chosen=False):
-    btn = map_choose.copy()
+    btn = config.get("map_choose_button.png").copy()
     if not chosen:
         btn.set_alpha(100)
     screen.blit(btn, (115, y))
@@ -31,7 +28,7 @@ def draw_map_button(screen: pygame.Surface, gamemap: gmap.Map, font: pygame.font
 
 
 def draw_error_button(screen: pygame.Surface, font: pygame.font.Font, filename: str, y: int, chosen=False):
-    btn = map_error.copy()
+    btn = config.get("map_choose_error_button.png").copy()
     fnt = font.render(filename, False, (0, 0, 0))
     if not chosen:
         btn.set_alpha(170)
@@ -73,7 +70,9 @@ def open_maps_folder():
 
 def display_buttons(screen: pygame.Surface):
     global btn
-    BUTTONS = [(folder_button, 115), (play_button, 382), (reload_button, 1084)]
+    BUTTONS = [(config.get("open_maps_folder.png"), 115),
+               (config.get("maps_menu_play_button.png"), 382),
+               (config.get("reload_maps_button.png"), 1084)]
     for i in (0, 1, 2):
         button = BUTTONS[i]
         if i == btn:
@@ -87,7 +86,7 @@ def run(**kwargs):
     global MAPS, index, NEXT_MODE, MODE, btn, CAN_PLAY
     screen = kwargs['screen']
     font = kwargs['font']
-    screen.blit(background, (0, 0))
+    screen.blit(config.get("maps_menu_bg.png"), (0, 0))
     if MAPS is None:
         update_maps(screen, font)
     for event in kwargs['events']:

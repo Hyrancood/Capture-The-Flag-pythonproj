@@ -17,7 +17,8 @@ MODES = {
 
 if __name__ == "__main__":
 	arg_parser = argparse.ArgumentParser()
-	arg_parser.add_argument("config", type=str, help="use path file as config")
+	arg_parser.add_argument("config", nargs='?', const=1, type=str,
+							default="path='paths.config'", help="use path file as config")
 	args = arg_parser.parse_args()
 	path = str(args.config)
 	if re.fullmatch("path='.*'", path):

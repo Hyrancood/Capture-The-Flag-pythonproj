@@ -115,6 +115,7 @@ class Fireball(Ability):
         self.can_damage = False
         self.surface = None
         self.screen = None
+        self.replay_file = None
         self.surface = pygame.Surface((24, 24))
         self.surface.fill((255, 64, 64))
 
@@ -126,6 +127,7 @@ class Fireball(Ability):
             self.ticks = self.cooldown
             self.can_damage = True
             self.screen = kwargs['screen']
+            self.replay_file = kwargs['replay_file']
             self.rect = pygame.Rect(self.owner.rect.topleft, (24, 24))
             self.rect.move_ip(4, 4)
 
@@ -142,3 +144,5 @@ class Fireball(Ability):
             if self.rect.colliderect(self.enemy):
                 self.enemy.die()
                 self.can_damage = False
+            if self.replay_file is not None:
+                self.replay_file.writelines([f"draw-{self.rect.left},{self.rect.top},{self.rect.width},{self.rect.height}-255, 64, 64\n"])

@@ -16,7 +16,7 @@ def awards(**kwargs):
             if event.key == 13:
                 core.instance = core.Core()
                 return "MAIN"
-    pygame.display.flip()
+    pygame.display.update(BG[3])
 
 def game(**kwargs):
     global BG
@@ -33,18 +33,22 @@ def game(**kwargs):
                            platforms=core.instance.collides,
                            teams=core.instance.teams,
                            thorns=core.instance.thorns,
-                           area=BG[3])
+                           area=BG[3],
+                           replay_file=core.instance.replay_file)
         team.flag.render_at(screen)
         if team.player.winner:
-            core.instance.winner = team.player
+            core.instance.set_winner(team.player)
+            pygame.display.update(BG[3])
+            return True
     pygame.display.update(BG[3])
+    return False
 
 
 def run(**kwargs):
     if core.instance.winner is None:
-        game(**kwargs)
-    else:
-        if awards(**kwargs) is not None:
-            return "MAIN"
+        if not game(**kwargs):
+            core.instance.write_frame()
+    elif awards(**kwargs) is not None:
+        return "MAIN"
     kwargs["clock"].tick(60)
     return "GAME"

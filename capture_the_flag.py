@@ -1,9 +1,14 @@
-import pygame
-import main, maps, replays, pregame, game, rendermap
-import config
 import argparse
 import re
 
+import pygame
+
+import config
+import game
+import main
+import maps
+import pregame
+import replays
 
 USE = main.run
 MODES = {

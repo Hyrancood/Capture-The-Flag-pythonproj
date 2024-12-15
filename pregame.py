@@ -1,6 +1,8 @@
 import pygame
-import player, abilities, core
+
+import abilities
 import config
+import core
 
 
 class Button:

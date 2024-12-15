@@ -1,6 +1,6 @@
 import pygame
-import config
 
+import config
 
 i = 0
 NEXT = ["PREGAME", "REPLAYS"]

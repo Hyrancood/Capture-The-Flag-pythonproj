@@ -1,9 +1,12 @@
-import pygame
-import pathlib, subprocess
-import readmap, core
-import config
-import gamemap as gmap
+import pathlib
+import subprocess
 
+import pygame
+
+import config
+import core
+import gamemap as gmap
+import readmap
 
 background = None
 reload_button = None

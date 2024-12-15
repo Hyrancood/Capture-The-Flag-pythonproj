@@ -1,6 +1,7 @@
+import pygame
+
 import abilities
 import vector
-import pygame
 
 G_ACCELERATION = 0.2
 DASH_POWER = 7

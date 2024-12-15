@@ -1,7 +1,8 @@
-import gamemap as gmap
+import pygame
+
+import gamemap
 import rendermap as renderer
 from player import Player
-import pygame
 
 
 class Core:
@@ -24,7 +25,7 @@ class Core:
         :return: данные по отрисовке заднего фона
         :rtype: tuple
         """
-        if self.map == None:
+        if self.map is None:
             raise ValueError
         background = renderer.draw_background_for_map(self.map)
         for platform in self.collides:
@@ -39,7 +40,15 @@ class Core:
         self.is_game = True
         return background
 
-    def set_map(self, gmap: gmap.Map):
+    def set_map(self, gmap: gamemap.Map):
+        """
+        Устанавливает карту игры
+
+        :param gmap: игровая карта (класс gamemap.Map)
+        :raises TypeError: если был передан не объект gamemap.Map
+        """
+        if not isinstance(gmap, gamemap.Map):
+            raise TypeError
         self.map = gmap
         for platform in gmap.platforms:
             self.collides.append(platform.rect)
@@ -48,18 +57,6 @@ class Core:
         for flag in gmap.flags:
             res = gmap.flags[flag]
             self.teams[flag].flag = Flag(res[0]*32, 32*res[1], flag)
-
-    def player_collide_with_platforms(self, player):
-        collide = player.rect.collidelistall(self.collides)
-        if len(collide) > 0:
-            pass #TODO: обработка столкновения с платформами
-
-    def player_collide_with_flag(self, player):
-        for team_name in self.teams:
-            team = self.teams[team_name]
-            if team.player != player:
-                if team.flag.rect.colliderect(player.rect):
-                    pass #TODO: взаимодействие с флагами, подбор флага
 
 
 class Team:
@@ -97,7 +94,16 @@ class Flag:
         """
         return self.init_x, self.init_y
 
-    def render_at(self, screen):
+    def render_at(self, screen: pygame.Surface):
+        """
+        Отрисовывает флаг на переданном экране
+
+        :param screen: элемент на котором нужно отобразить флаг
+        :type screen: pygame.Surface
+
+        """
+        if not isinstance(screen, pygame.Surface):
+            raise TypeError
         if not self.is_carried:
             screen.blit(self.sprite, self.rect)
 

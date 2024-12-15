@@ -78,7 +78,7 @@ flags:
 	- color: red, x: 28, y: 5
 ```
 ### Структура языка:
-![lang_structure](https://drive.google.com/uc?id=14W4dzKlP8X1uaSxGxYsMdnWqs4Qo244V)
+![lang_structure](https://drive.google.com/uc?id=1cDSYhsYOmkxnZAPp0Gm-iRt1ovIKk2Se)
 ### Параметры:
 - name: объект с параметрами en и ru либо два объекта с разными языками
 ```ctfmap
@@ -127,7 +127,6 @@ flags:
 - `maps/` - карты
 
 ---
-
 
 ## Авторы
 - **Шапиро Максим**  

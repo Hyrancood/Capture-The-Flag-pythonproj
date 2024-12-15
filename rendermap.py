@@ -1,7 +1,7 @@
 import pygame
-import gamemap as gmap
-import config
 
+import config
+import gamemap as gmap
 
 BG = None
 

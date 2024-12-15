@@ -1,11 +1,6 @@
 import pygame
-from PIL.ImageChops import screen
 
 import core
-import gamemap as gmap
-import player
-from core import instance
-
 
 BG = None
 

@@ -1,5 +1,6 @@
-import config
 import pygame
+
+import config
 from vector import Vector
 
 

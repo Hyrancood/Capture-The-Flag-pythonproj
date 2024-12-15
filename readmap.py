@@ -1,5 +1,5 @@
-import gamemap as gmap
 import config
+import gamemap as gmap
 
 
 def parse_value(value):

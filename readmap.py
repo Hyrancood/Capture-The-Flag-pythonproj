@@ -39,7 +39,7 @@ def parse_map(file_content) -> gmap.Map:
                 state = "READING"
             else:
                 raise ValueError("Invalid syntax: expected key ending with ':'")
-    return gmap.Map(data)
+    return gmap.Map(**data)
 
 
 def check_type_valid(parameter, value, t):

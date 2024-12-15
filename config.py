@@ -5,9 +5,10 @@ import pygame
 
 
 class Paths:
-    def __init__(self, assets=None, maps=None):
+    def __init__(self, assets=None, maps=None, replays=None):
         self.assets = assets
         self.maps = maps
+        self.replays = replays
 
 
 INSTANCE = Paths()
@@ -40,12 +41,19 @@ def read_config(path: str):
             if not pathlib.Path(maps_path).is_dir():
                 raise ValueError(f"Maps folder error: {maps_path}")
             INSTANCE.maps = maps_path
+        elif re.fullmatch(r"replays\s*=\s*\".*\"", line):
+            replays_path = line[line.find("\"")+1:line.rfind("\"")].strip()
+            if not pathlib.Path(replays_path).is_dir():
+                raise ValueError(f"Maps folder error: {replays_path}")
+            INSTANCE.replays = replays_path
         elif not re.fullmatch(r"\s*", line):
             raise ValueError(f"Corrupted string: {line}")
     if INSTANCE.assets is None:
         raise ValueError("No assets directory set")
     if INSTANCE.maps is None:
         raise ValueError("No maps directory set")
+    if INSTANCE.replays is None:
+        raise ValueError("No replays directory set")
     assets_path = INSTANCE.assets
     INSTANCE.assets = load_assets(assets_path)
     files = set()

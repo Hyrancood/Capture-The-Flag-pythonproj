@@ -88,3 +88,29 @@ def draw_background_for_map(gamemap: gmap.Map):
     rendered_map = map_surface(gamemap)
     surface.blit(rendered_map, (x, y))
     return surface, rendered_map, (x, y), pygame.Rect(x, y, width, height)
+
+def draw_background_for_replay(gamemap: gmap.Map):
+    if not isinstance(gamemap, gmap.Map):
+        raise TypeError
+    surface = pygame.Surface((1280, 720))
+    surface.fill((20, 20, 20))
+    surf = pygame.Surface((gamemap.rect.width, gamemap.rect.height))
+    surf.fill((10, 100, 160))
+    surface.blit(surf, gamemap.rect)
+    platforms_only = [[0 for __ in range(gamemap.sizes['x'])] for _ in range(gamemap.sizes['y'])]
+    for platform in gamemap.platforms:
+        x = (platform.rect.left - gamemap.rect.left)//32
+        for _ in range(platform.rect.left, platform.rect.right-1, 32):
+            y = (platform.rect.top - gamemap.rect.top)//32
+            for __ in range(platform.rect.top, platform.rect.bottom-1, 32):
+                platforms_only[y][x] = 1
+                y += 1
+            x += 1
+    for x in range(gamemap.sizes['x']):
+        for y in range(gamemap.sizes['y']):
+            if platforms_only[y][x] == 1:
+                surface.blit(get_sprite(x, y, platforms_only, (gamemap.sizes['x'], gamemap.sizes['y'])),
+                             (x * 32 + gamemap.rect.left, y * 32 + gamemap.rect.top))
+    for thorn in gamemap.thorns:
+        surface.blit(config.get("thorns.png"), thorn.rect)
+    return surface

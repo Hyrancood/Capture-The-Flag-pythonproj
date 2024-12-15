@@ -95,6 +95,8 @@ class Player:
                 i += 1
 
     def distance(self, other: "Player"):
+        if not isinstance(other, Player):
+            raise TypeError
         return (abs(self.rect.top - other.rect.top)**2 +
                 abs(self.rect.left - other.rect.left)**2)**0.5
 
@@ -133,6 +135,8 @@ class Player:
         return any(player_rect.colliderect(platform) for platform in platforms)
 
     def is_standing_on_other_player(self, other: "Player"):
+        if not isinstance(other, Player):
+            raise TypeError
         player_rect = pygame.Rect(self.rect)
         player_rect.move_ip(0, 1)
         return not self.rect.colliderect(other.rect) and player_rect.colliderect(other.rect)

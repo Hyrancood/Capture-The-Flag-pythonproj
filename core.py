@@ -5,7 +5,6 @@ import pygame
 
 import abilities
 import config
-import core
 import gamemap
 import player
 import rendermap as renderer
@@ -69,7 +68,7 @@ class Core:
         self.winner = winner
         self.is_game = False
         if self.should_write_replay:
-            name = 'Синий' if core.instance.winner.color == 'blue' else 'Красный'
+            name = 'Синий' if instance.winner.color == 'blue' else 'Красный'
             self.replay_file.writelines([f"end\n", f"Победитель - {name}"])
             self.replay_file.close()
             self.replay_file = None
@@ -175,6 +174,14 @@ def rect_to_str(rect: pygame.Rect):
 def str_to_rect(string: str):
     if not isinstance(string, str):
         raise TypeError
+    if string.count(',')!=3:
+        raise ValueError
+    else:
+        for x in string.split(','):
+            try:
+                _ = int(x)
+            except TypeError:
+                raise ValueError
     return pygame.Rect(*map(int, string.split(',')))
 
 def team_to_str(team: "Team"):
@@ -191,7 +198,7 @@ def str_to_team(string: str, color: str):
         raise ValueError
     flag_rect, player_rect, player_abilities = string.split("-")
     p = Player(color)
-    p.rect = player_rect
+    p.rect = str_to_rect(player_rect)
     p.set_abilities(str_to_player_abilities(player_abilities))
     flag = Flag(0, 0, color, str_to_rect(flag_rect))
     return Team(p, flag)
@@ -235,5 +242,5 @@ def str_to_team_in_game(string: str, team: "Team"):
     team.flag.is_carried = flag_is_carried == "True"
     team.player.rect = str_to_rect(player_rect)
     team.player.dead = int(dead)
-    team.player.carried_flag = None if carry_flag == "False" else core.instance.teams["red" if team.player.color == "blue" else "blue"].flag
+    team.player.carried_flag = None if carry_flag == "False" else instance.teams["red" if team.player.color == "blue" else "blue"].flag
     team.player.set_abilities(str_to_player_abilities(player_abilities))

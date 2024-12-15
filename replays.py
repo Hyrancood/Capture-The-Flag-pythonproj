@@ -3,6 +3,7 @@ import re
 import subprocess
 
 import pygame
+from PIL.ImageChops import screen
 
 import config
 import core

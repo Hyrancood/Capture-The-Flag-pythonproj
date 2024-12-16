@@ -235,7 +235,7 @@ class Fireball(Ability):
     :ivar rect: рект шара
     :type rect: pygame.Rect
     :ivar velocity: скорость шара
-    :type velocity: Vector
+    :type velocity: vector.Vector
     :ivar platforms: список передаваемых платформ, с которыми шар может столкнуться
     :type platforms: list
     :ivar can_damage: наносит ли урон

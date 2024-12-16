@@ -34,6 +34,7 @@ class Core:
     :ivar winner: победитель текущей игры
     :type winner: Player
     """
+
     def __init__(self):
         """
         Создание нового экземпляра
@@ -68,7 +69,7 @@ class Core:
             team = self.teams[team_name]
             team.flag.shift(background[2])
             x, y = team.flag.get_init_cords()
-            team.player.spawn(spawn_x=x, spawn_y=y-64)
+            team.player.spawn(spawn_x=x, spawn_y=y - 64)
         self.is_game = True
         if self.should_write_replay:
             folder = pathlib.Path(config.INSTANCE.replays)
@@ -126,7 +127,7 @@ class Core:
             self.thorns.append(thorn.rect)
         for flag in gmap.flags:
             res = gmap.flags[flag]
-            self.teams[flag].flag = Flag(res[0]*32, 32*res[1], flag)
+            self.teams[flag].flag = Flag(res[0] * 32, 32 * res[1], flag)
 
 
 class Team:
@@ -138,7 +139,8 @@ class Team:
     :ivar flag: флаг
     :type flag: Flag
     """
-    def __init__(self, p :Player, flag: "Flag"):
+
+    def __init__(self, p: Player, flag: "Flag"):
         """
         Создание нового экземпляра команды
 
@@ -162,7 +164,8 @@ class Flag:
     :ivar rect: хитбокс флага
     :ivar rect: pygame.Rect
     """
-    def __init__(self, x: int, y: int, color: str, rect: pygame.Rect =None):
+
+    def __init__(self, x: int, y: int, color: str, rect: pygame.Rect = None):
         """
         Создаёт объект флага по координатам карты
 
@@ -233,6 +236,7 @@ def array_of_rects_to_str(rects_list: List[pygame.Rect]) -> str:
         result += rect_to_str(rect) + ";"
     return result[:-1]
 
+
 def str_to_array_of_rects(string: str) -> List[pygame.Rect]:
     """
     Десерилизует список Rect'ов из строки
@@ -244,6 +248,7 @@ def str_to_array_of_rects(string: str) -> List[pygame.Rect]:
     if not isinstance(string, str):
         raise TypeError
     return [str_to_rect(rect) for rect in string.split(";")]
+
 
 def rect_to_str(rect: pygame.Rect) -> str:
     """
@@ -257,6 +262,7 @@ def rect_to_str(rect: pygame.Rect) -> str:
         raise TypeError
     return f"{rect.left},{rect.top},{rect.width},{rect.height}"
 
+
 def str_to_rect(string: str) -> pygame.Rect:
     """
     Десериализует строку в Rect
@@ -269,7 +275,7 @@ def str_to_rect(string: str) -> pygame.Rect:
     """
     if not isinstance(string, str):
         raise TypeError
-    if string.count(',')!=3:
+    if string.count(',') != 3:
         raise ValueError
     else:
         for x in string.split(','):
@@ -278,6 +284,7 @@ def str_to_rect(string: str) -> pygame.Rect:
             except TypeError:
                 raise ValueError
     return pygame.Rect(*map(int, string.split(',')))
+
 
 def team_to_str(team: "Team") -> str:
     """
@@ -290,6 +297,7 @@ def team_to_str(team: "Team") -> str:
     if not isinstance(team, Team):
         raise TypeError
     return f"{rect_to_str(team.flag.rect)}-{rect_to_str(team.player.rect)}-{player_abilities_to_str(team.player)}"
+
 
 def str_to_team(string: str, color: str) -> Team:
     """
@@ -314,6 +322,7 @@ def str_to_team(string: str, color: str) -> Team:
     flag = Flag(0, 0, color, str_to_rect(flag_rect))
     return Team(p, flag)
 
+
 def player_abilities_to_str(p: player.Player) -> str:
     """
     Сериализует способности игрока
@@ -331,7 +340,8 @@ def player_abilities_to_str(p: player.Player) -> str:
             result += f"{ability.sprite_id},{ability.cooldown},{ability.ticks};"
     return result[:-1]
 
-def str_to_player_abilities(string: str) -> List[abilities.Ability|None]:
+
+def str_to_player_abilities(string: str) -> List[abilities.Ability | None]:
     """
     Десериализует способности игрока из строки
 
@@ -342,6 +352,7 @@ def str_to_player_abilities(string: str) -> List[abilities.Ability|None]:
     if not isinstance(string, str):
         raise TypeError
     return [str_to_ability(ability) for ability in string.split(";")]
+
 
 def str_to_ability(string: str) -> abilities.Ability:
     """
@@ -360,6 +371,7 @@ def str_to_ability(string: str) -> abilities.Ability:
     ability.ticks = ticks
     return ability
 
+
 def team_in_game_to_str(team: "Team"):
     """
     Скриализует игровое состояние команды в строку
@@ -371,6 +383,7 @@ def team_in_game_to_str(team: "Team"):
     if not isinstance(team, Team):
         raise TypeError
     return f"{team.flag.is_carried}-{team.player.dead}-{team.player.carried_flag is not None}-{rect_to_str(team.player.rect)}-{player_abilities_to_str(team.player)}"
+
 
 def str_to_team_in_game(string: str, team: "Team"):
     """
@@ -390,5 +403,6 @@ def str_to_team_in_game(string: str, team: "Team"):
     team.flag.is_carried = flag_is_carried == "True"
     team.player.rect = str_to_rect(player_rect)
     team.player.dead = int(dead)
-    team.player.carried_flag = None if carry_flag == "False" else instance.teams["red" if team.player.color == "blue" else "blue"].flag
+    team.player.carried_flag = None if carry_flag == "False" else instance.teams[
+        "red" if team.player.color == "blue" else "blue"].flag
     team.player.set_abilities(str_to_player_abilities(player_abilities))

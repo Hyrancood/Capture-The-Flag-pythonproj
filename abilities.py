@@ -23,6 +23,7 @@ class Ability:
     :ivar sprite_id: номер спрайта способности
     :type sprite_id: int
     '''
+
     def __init__(self, sprite_id: int, cooldown: int, duration: int):
         '''
         Создание объекта-способности
@@ -85,10 +86,11 @@ class Ability:
         rect = pygame.Rect(0, 0, 64, 64)
         rect.move_ip(map_area.topleft)
         rect.move_ip(x_offset, map_area.height - 80)
-        screen.blit(config.get("abilities.png"), rect, area=(self.sprite_id*64, 64, 64, 64))
-        percent = int(64*self.ticks/self.cooldown)
+        screen.blit(config.get("abilities.png"), rect, area=(self.sprite_id * 64, 64, 64, 64))
+        percent = int(64 * self.ticks / self.cooldown)
         rect.move_ip(0, percent)
         screen.blit(config.get("abilities.png"), rect, area=(self.sprite_id * 64, percent, 64, 64 - percent))
+
 
 class Freeze(Ability):
     '''
@@ -97,6 +99,7 @@ class Freeze(Ability):
     :ivar minus: значение, на которое уменьшается скорость противника при активации
     :type minus: int
     '''
+
     def __init__(self):
         '''
         Создание объекта, заимствовано у родительского класса
@@ -111,10 +114,10 @@ class Freeze(Ability):
         :type kwargs: dict
         '''
         if super().use(**kwargs):
-            owner=self.owner
-            enemy=self.enemy
+            owner = self.owner
+            enemy = self.enemy
             if owner.distance(enemy) <= 200 and not owner.is_dead() and not enemy.is_dead():
-                self.enemy.speed/=2
+                self.enemy.speed /= 2
                 self.minus = self.enemy.velocity.x / 2
                 self.enemy.velocity.x -= self.minus
                 self.ticks = self.cooldown
@@ -139,6 +142,7 @@ class Bomb(Ability):
     '''
     Способность, позволяющая взорвать противника
     '''
+
     def __init__(self):
         '''
         Создание объекта, заимствовано у родительского класса
@@ -153,16 +157,18 @@ class Bomb(Ability):
         :type kwargs: dict
         '''
         if super().use(**kwargs):
-            owner=self.owner
-            enemy=self.enemy
+            owner = self.owner
+            enemy = self.enemy
             if owner.distance(enemy) <= 200 and not owner.is_dead() and not enemy.is_dead():
                 enemy.die()
                 self.ticks = self.cooldown
+
 
 class Swap(Ability):
     '''
     Способность, обменивающая игроков местами
     '''
+
     def __init__(self):
         '''
         Создание объекта, заимствовано у родительского класса
@@ -183,6 +189,7 @@ class Swap(Ability):
                 owner.rect, enemy.rect = pygame.Rect(enemy.rect), pygame.Rect(owner.rect)
                 self.ticks = self.cooldown
 
+
 class Pulling(Ability):
     '''
     Способность, притягивающая противника к владельцу
@@ -192,6 +199,7 @@ class Pulling(Ability):
     :ivar y: скорость притяжения по у
     :type y: int
     '''
+
     def __init__(self):
         '''
         Создание объекта, заимствовано у родительского класса
@@ -207,8 +215,8 @@ class Pulling(Ability):
         '''
         if super().use(**kwargs):
             self.enemy.unpush_all_movement_buttons()
-            self.x = max(-20, min(20, (self.owner.rect.left - self.enemy.rect.left)/self.duration))
-            self.y = max(-20, min(20, (self.owner.rect.top - self.enemy.rect.top)/self.duration))
+            self.x = max(-20, min(20, (self.owner.rect.left - self.enemy.rect.left) / self.duration))
+            self.y = max(-20, min(20, (self.owner.rect.top - self.enemy.rect.top) / self.duration))
             self.enemy.velocity.x += self.x
             self.enemy.velocity.y += self.y
             self.ticks = self.cooldown
@@ -227,6 +235,7 @@ class Pulling(Ability):
         super().consume_cooldown()
         if self.ticks == self.cooldown - self.duration:
             self.deactivate()
+
 
 class Fireball(Ability):
     '''
@@ -247,6 +256,7 @@ class Fireball(Ability):
     :ivar replay_file: файл с реплеем текущей игры (если записывается)
     :type replay_file: TextIOWrapper
     '''
+
     def __init__(self):
         '''
         Создание объекта
@@ -275,7 +285,7 @@ class Fireball(Ability):
         if super().use(**kwargs):
             self.platforms = kwargs['platforms']
             self.velocity.x = self.owner.velocity.x
-            self.velocity.y = self.owner.velocity.y/2
+            self.velocity.y = self.owner.velocity.y / 2
             self.ticks = self.cooldown
             self.can_damage = True
             self.screen = kwargs['screen']
@@ -303,4 +313,5 @@ class Fireball(Ability):
                 self.enemy.die()
                 self.can_damage = False
             if self.replay_file is not None:
-                self.replay_file.writelines([f"draw-{self.rect.left},{self.rect.top},{self.rect.width},{self.rect.height}-255, 64, 64\n"])
+                self.replay_file.writelines(
+                    [f"draw-{self.rect.left},{self.rect.top},{self.rect.width},{self.rect.height}-255, 64, 64\n"])

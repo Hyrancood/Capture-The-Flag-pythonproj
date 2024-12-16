@@ -27,6 +27,7 @@ def awards(**kwargs) -> str:
                 return "MAIN"
     pygame.display.update(BG[3])
 
+
 def game(**kwargs) -> bool:
     """
     Основной этап игры

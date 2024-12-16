@@ -44,7 +44,7 @@ def draw_map_button(screen: pygame.Surface, gamemap: gmap.Map, font: pygame.font
         lang_y += 40
 
 
-def draw_error_button(screen: pygame.Surface, font: pygame.font.Font, filename: str, y: int, chosen=False):
+def draw_error_button(screen: pygame.Surface, font: pygame.font.Font, filename: str, y: int, error_msg:str=None, chosen=False):
     """
     Отрисовка кнопки не прошедшей валидацию карты
 
@@ -52,6 +52,7 @@ def draw_error_button(screen: pygame.Surface, font: pygame.font.Font, filename: 
     :param font: шрифт для надписей
     :param filename: название файла
     :param y: 'y'-координата для отрисовки
+    :param error_msg: сообщение об ошибке
     :param chosen: выбрана ли эта карта
     """
     btn = config.get("map_choose_error_button.png").copy()
@@ -61,6 +62,9 @@ def draw_error_button(screen: pygame.Surface, font: pygame.font.Font, filename: 
         fnt.set_alpha(170)
     screen.blit(btn, (115, y))
     screen.blit(fnt, (165, y + 13))
+    if isinstance(error_msg, str) and error_msg != "":
+        font = pygame.font.SysFont("Comic Sans MS", 30)
+        screen.blit(font.render(error_msg, False, (200, 0, 0)), (165, y+58))
 
 
 def update_maps(screen: pygame.Surface, font: pygame.font.Font):
@@ -84,8 +88,12 @@ def update_maps(screen: pygame.Surface, font: pygame.font.Font):
             continue
         try:
             NORMAL.append((screen, readmap.from_file(mapfile), font))
-        except ValueError:
-            ERROR.append((screen, font, file))
+        except ValueError as e:
+            ERROR.append((screen, font, file, str(e)))
+        except TypeError as e:
+            ERROR.append((screen, font, file, e))
+        except SyntaxError as e:
+            ERROR.append((screen, font, file, e))
     i = 0
     for mp in NORMAL:
         if i == 4:
@@ -96,7 +104,8 @@ def update_maps(screen: pygame.Surface, font: pygame.font.Font):
     for mp in ERROR:
         if i == 4:
             break
-        MAPS.append((False, draw_error_button, (*mp, y)))
+        screen, font, filename, error_msg = mp
+        MAPS.append((False, draw_error_button, (screen, font, filename, y, error_msg)))
         y += 134
         i += 1
     if len(NORMAL) > 0:

@@ -80,7 +80,7 @@ def update_maps(screen: pygame.Surface, font: pygame.font.Font):
     y = 51
     NORMAL = []
     ERROR = []
-    for mapfile in pathlib.Path("maps").iterdir():
+    for mapfile in pathlib.Path(config.INSTANCE.maps).iterdir():
         if not mapfile.is_file():
             continue
         file = mapfile.name

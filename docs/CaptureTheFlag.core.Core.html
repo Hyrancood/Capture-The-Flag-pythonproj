@@ -1,0 +1,914 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "DTD/xhtml1-strict.dtd">
+<html>
+  
+
+  <head>
+    
+    <title>CaptureTheFlag.core.Core</title>
+    <meta name="generator" content="pydoctor 24.11.0"> 
+        
+    </meta>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1 maximum-scale=1" />
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="apidocs.css" />
+    <link rel="stylesheet" type="text/css" href="extra.css" />
+    
+</head>
+
+  <body>
+
+    
+
+    <nav class="navbar navbar-default mainnavbar">
+      
+  
+  <div class="container-fluid">
+
+
+    <div class="navbar-header">
+      
+      <div class="navlinks">
+        <span class="navbar-brand">
+          CaptureTheFlag <a href="index.html">API Documentation</a>
+        </span>
+
+        <a href="moduleIndex.html">
+          Modules
+        </a>
+
+        <a href="classIndex.html">
+          Classes
+        </a>
+
+        <a href="nameIndex.html">
+          Names
+        </a>
+
+        <div id="search-box-container">
+          <div class="input-group">
+            <input id="search-box" type="search" name="search-query" placeholder="Search..." aria-label="Search" minlength="2" class="form-control" autocomplete="off" />
+            
+            <span class="input-group-btn">
+              <a style="display: none;" class="btn btn-default" id="search-clear-button" title="Clear" onclick="clearSearch()"><img src="fonts/x-circle.svg" alt="Clear" /></a>
+              <a class="btn btn-default" id="apidocs-help-button" title="Help" href="apidocs-help.html"><img src="fonts/info.svg" alt="Help" /></a>
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="search-results-container" style="display: none;">
+        
+        <div id="search-buttons">
+          <span class="label label-default" id="search-docstrings-button">
+          <label class="checkbox-inline">
+            <input type="checkbox" id="toggle-search-in-docstrings-checkbox" value="false" onclick="toggleSearchInDocstrings()">
+              search in docstrings
+            </input>
+          </label>
+          </span>
+          
+        </div>
+        
+        <noscript>
+            <h1>Cannot search: JavaScript is not supported/enabled in your browser.</h1>
+        </noscript>
+
+        <div id="search-status"> </div>
+
+        <div class="warning" id="search-warn-box" style="display: none;">
+          <p class="rst-last"><span id="search-warn"></span></p>
+        </div>
+
+        <table id="search-results">
+          <!-- Filled dynamically by JS -->
+        </table>
+        
+        <div style="margin-top: 10px;">
+          <p>For more information on the search, visit the <a href="apidocs-help.html#rst-search">help page</a>.</p>
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+</nav>
+    
+    <div class="container-fluid">
+
+      <!-- Side navigation -->
+      <div class="sidebarcontainer" style="display: none;">
+        
+        <div class="sidebar"><nav class="sidebar">
+  
+
+  <div>
+
+      <div class="thingTitle">
+        <span>Class</span>
+        <code class="thisobject"><a href="CaptureTheFlag.core.Core.html" class="internal-link" title="This class"><wbr></wbr>Core</a></code> 
+      </div>
+      
+      <div>
+        
+
+        
+         
+
+        
+        
+
+        <div class="childrenKindTitle">Methods</div>
+        <ul>
+    
+    <li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#__init__" class="internal-link" title="CaptureTheFlag.core.Core.__init__">__init__</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#set_map" class="internal-link" title="CaptureTheFlag.core.Core.set_map">set<wbr></wbr>_map</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#set_winner" class="internal-link" title="CaptureTheFlag.core.Core.set_winner">set<wbr></wbr>_winner</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#start_game" class="internal-link" title="CaptureTheFlag.core.Core.start_game">start<wbr></wbr>_game</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#write_frame" class="internal-link" title="CaptureTheFlag.core.Core.write_frame">write<wbr></wbr>_frame</a></code>
+            </div>
+        
+
+    </li>
+</ul> 
+
+        
+         
+
+        <div class="childrenKindTitle">Attributes</div>
+        <ul>
+    
+    <li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#collides" class="internal-link" title="CaptureTheFlag.core.Core.collides">collides</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#is_game" class="internal-link" title="CaptureTheFlag.core.Core.is_game">is<wbr></wbr>_game</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#map" class="internal-link" title="CaptureTheFlag.core.Core.map">map</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#replay_file" class="internal-link" title="CaptureTheFlag.core.Core.replay_file">replay<wbr></wbr>_file</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#should_write_replay" class="internal-link" title="CaptureTheFlag.core.Core.should_write_replay">should<wbr></wbr>_write<wbr></wbr>_replay</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#teams" class="internal-link" title="CaptureTheFlag.core.Core.teams">teams</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#thorns" class="internal-link" title="CaptureTheFlag.core.Core.thorns">thorns</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="#winner" class="internal-link" title="CaptureTheFlag.core.Core.winner">winner</a></code>
+            </div>
+        
+
+    </li>
+</ul> 
+
+        
+         
+        
+      </div>
+  </div><div>
+
+      <div class="thingTitle">
+        <span>Module</span>
+        <code><a href="CaptureTheFlag.core.html" class="internal-link" title="The parent of this class">core</a></code> 
+      </div>
+      
+      <div>
+        
+
+        
+         
+
+        <div class="childrenKindTitle">Classes</div>
+        <ul>
+    
+    <li class=" thisobject">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="CaptureTheFlag.core.Core.html" class="internal-link" title="CaptureTheFlag.core.Core"><wbr></wbr>Core</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="CaptureTheFlag.core.Flag.html" class="internal-link" title="CaptureTheFlag.core.Flag"><wbr></wbr>Flag</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="CaptureTheFlag.core.Team.html" class="internal-link" title="CaptureTheFlag.core.Team"><wbr></wbr>Team</a></code>
+            </div>
+        
+
+    </li>
+</ul>
+
+        <div class="childrenKindTitle">Functions</div>
+        <ul>
+    
+    <li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="CaptureTheFlag.core.html#array_of_rects_to_str" class="internal-link" title="CaptureTheFlag.core.array_of_rects_to_str">array<wbr></wbr>_of<wbr></wbr>_rects<wbr></wbr>_to<wbr></wbr>_str</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="CaptureTheFlag.core.html#player_abilities_to_str" class="internal-link" title="CaptureTheFlag.core.player_abilities_to_str">player<wbr></wbr>_abilities<wbr></wbr>_to<wbr></wbr>_str</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="CaptureTheFlag.core.html#rect_to_str" class="internal-link" title="CaptureTheFlag.core.rect_to_str">rect<wbr></wbr>_to<wbr></wbr>_str</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="CaptureTheFlag.core.html#str_to_ability" class="internal-link" title="CaptureTheFlag.core.str_to_ability">str<wbr></wbr>_to<wbr></wbr>_ability</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="CaptureTheFlag.core.html#str_to_array_of_rects" class="internal-link" title="CaptureTheFlag.core.str_to_array_of_rects">str<wbr></wbr>_to<wbr></wbr>_array<wbr></wbr>_of<wbr></wbr>_rects</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="CaptureTheFlag.core.html#str_to_player_abilities" class="internal-link" title="CaptureTheFlag.core.str_to_player_abilities">str<wbr></wbr>_to<wbr></wbr>_player<wbr></wbr>_abilities</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="CaptureTheFlag.core.html#str_to_rect" class="internal-link" title="CaptureTheFlag.core.str_to_rect">str<wbr></wbr>_to<wbr></wbr>_rect</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="CaptureTheFlag.core.html#str_to_team" class="internal-link" title="CaptureTheFlag.core.str_to_team">str<wbr></wbr>_to<wbr></wbr>_team</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="CaptureTheFlag.core.html#str_to_team_in_game" class="internal-link" title="CaptureTheFlag.core.str_to_team_in_game">str<wbr></wbr>_to<wbr></wbr>_team<wbr></wbr>_in<wbr></wbr>_game</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="CaptureTheFlag.core.html#team_in_game_to_str" class="internal-link" title="CaptureTheFlag.core.team_in_game_to_str">team<wbr></wbr>_in<wbr></wbr>_game<wbr></wbr>_to<wbr></wbr>_str</a></code>
+            </div>
+        
+
+    </li><li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="CaptureTheFlag.core.html#team_to_str" class="internal-link" title="CaptureTheFlag.core.team_to_str">team<wbr></wbr>_to<wbr></wbr>_str</a></code>
+            </div>
+        
+
+    </li>
+</ul> 
+
+        
+         
+
+        <div class="childrenKindTitle">Variables</div>
+        <ul>
+    
+    <li class="">
+        
+        
+        
+
+        
+            <div class="itemName"><code><a href="CaptureTheFlag.core.html#instance" class="internal-link" title="CaptureTheFlag.core.instance">instance</a></code>
+            </div>
+        
+
+    </li>
+</ul> 
+
+        
+         
+        
+      </div>
+  </div>
+
+</nav>
+        </div>
+        <div id="collapseSideBar">
+          <a class="btn btn-link" onclick="toggleSideBarCollapse()" title="Toggle Sidebar Collapse">
+          </a>
+        </div> 
+        <script src="sidebartoggle.js" type="text/javascript"></script>
+       
+      </div>
+
+      <div id="main" class="">
+        
+
+        
+
+        <div class="page-header">
+          <h1 class="class"><code><code><a href="index.html" class="internal-link">CaptureTheFlag</a></code><wbr></wbr>.<code><a href="CaptureTheFlag.core.html" class="internal-link" title="CaptureTheFlag.core">core</a></code><wbr></wbr>.<code><a href="CaptureTheFlag.core.Core.html" class="internal-link" title="CaptureTheFlag.core.Core">Core</a></code></code></h1>
+          <div id="showPrivate">
+            <button class="btn btn-link" onclick="togglePrivate()">Toggle Private API</button>
+          </div>
+        </div>
+
+        <div class="categoryHeader">
+          class documentation
+        </div>
+
+        <div class="extrasDocstring">
+          <p class="class-signature"><code><span class="py-keyword">class</span> <span class="py-defname">Core</span>:</code></p><p>Constructor: <code><a href="#__init__" class="internal-link" title="CaptureTheFlag.core.Core.__init__">Core()</a></code></p>
+          <p><a href="classIndex.html#CaptureTheFlag.core.Core">View In Hierarchy</a></p>
+        </div>
+
+        <div class="moduleDocstring">
+          <div><p>Хранилище данных игры</p></div>
+        </div>
+
+        <div id="splitTables">
+          <table class="children sortable" id="id18">
+  
+  
+  <tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#__init__" class="internal-link" title="CaptureTheFlag.core.Core.__init__">__init__</a></code></td>
+    <td>Создание нового экземпляра</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#set_map" class="internal-link" title="CaptureTheFlag.core.Core.set_map">set<wbr></wbr>_map</a></code></td>
+    <td>Устанавливает карту игры</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#set_winner" class="internal-link" title="CaptureTheFlag.core.Core.set_winner">set<wbr></wbr>_winner</a></code></td>
+    <td>Устанавливает победителя и завершает игру</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#start_game" class="internal-link" title="CaptureTheFlag.core.Core.start_game">start<wbr></wbr>_game</a></code></td>
+    <td>Инициирует начало игры</td>
+  </tr><tr class="method">
+    
+    <td>Method</td>
+    <td><code><a href="#write_frame" class="internal-link" title="CaptureTheFlag.core.Core.write_frame">write<wbr></wbr>_frame</a></code></td>
+    <td>Записывает текущий фрейм если запись повторов включена</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#collides" class="internal-link" title="CaptureTheFlag.core.Core.collides">collides</a></code></td>
+    <td>список платформ</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#is_game" class="internal-link" title="CaptureTheFlag.core.Core.is_game">is<wbr></wbr>_game</a></code></td>
+    <td>идёт ли сейчас игра</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#map" class="internal-link" title="CaptureTheFlag.core.Core.map">map</a></code></td>
+    <td>игровая карта</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#replay_file" class="internal-link" title="CaptureTheFlag.core.Core.replay_file">replay<wbr></wbr>_file</a></code></td>
+    <td>файл, в который записывается запись игры, если данная функция включена</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#should_write_replay" class="internal-link" title="CaptureTheFlag.core.Core.should_write_replay">should<wbr></wbr>_write<wbr></wbr>_replay</a></code></td>
+    <td>нужно ли записывать текущую игру</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#teams" class="internal-link" title="CaptureTheFlag.core.Core.teams">teams</a></code></td>
+    <td>хранилище команд</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#thorns" class="internal-link" title="CaptureTheFlag.core.Core.thorns">thorns</a></code></td>
+    <td>список шипов</td>
+  </tr><tr class="instancevariable">
+    
+    <td>Instance Variable</td>
+    <td><code><a href="#winner" class="internal-link" title="CaptureTheFlag.core.Core.winner">winner</a></code></td>
+    <td>победитель текущей игры</td>
+  </tr>
+</table>
+          
+
+            
+        </div>
+
+        <div id="childList">
+          <div class="basemethod">
+  
+  
+  <a name="CaptureTheFlag.core.Core.__init__">
+    
+  </a>
+  <a name="__init__">
+    
+  </a>
+  <div class="functionHeader">
+    
+    
+    <span class="py-keyword">def</span> <span class="py-defname">__init__</span><span class="function-signature">(self)</span>:
+    
+    <a class="headerLink" href="#__init__" title="CaptureTheFlag.core.Core.__init__">
+      
+      
+      ¶
+    </a>
+  </div>
+  <div class="docstring functionBody">
+    
+    <div><p>Создание нового экземпляра</p></div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="CaptureTheFlag.core.Core.set_map">
+    
+  </a>
+  <a name="set_map">
+    
+  </a>
+  <div class="functionHeader">
+    
+    
+    <span class="py-keyword">def</span> <span class="py-defname">set_map</span><span class="function-signature">(self, gmap: <code>gamemap.Map</code>)</span>:
+    
+    <a class="headerLink" href="#set_map" title="CaptureTheFlag.core.Core.set_map">
+      
+      
+      ¶
+    </a>
+  </div>
+  <div class="docstring functionBody">
+    
+    <div><p>Устанавливает карту игры</p><table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Parameters</td></tr><tr><td class="fieldArgContainer"><span class="fieldArg">gmap:</span><code>gamemap.Map</code></td><td class="fieldArgDesc">игровая карта (класс gamemap.Map)</td></tr><tr class="fieldStart"><td class="fieldName" colspan="2">Raises</td></tr><tr><td class="fieldArgContainer"><code>TypeError</code></td><td>если был передан не объект gamemap.Map</td></tr></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="CaptureTheFlag.core.Core.set_winner">
+    
+  </a>
+  <a name="set_winner">
+    
+  </a>
+  <div class="functionHeader">
+    
+    
+    <span class="py-keyword">def</span> <span class="py-defname">set_winner</span><span class="function-signature">(self, winner: <code>player.Player</code>)</span>:
+    
+    <a class="headerLink" href="#set_winner" title="CaptureTheFlag.core.Core.set_winner">
+      
+      
+      ¶
+    </a>
+  </div>
+  <div class="docstring functionBody">
+    
+    <div><p>Устанавливает победителя и завершает игру</p><table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Parameters</td></tr><tr><td class="fieldArgContainer"><span class="fieldArg">winner:</span><code>player.Player</code></td><td class="fieldArgDesc">игрок, ставшим победителем</td></tr></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="CaptureTheFlag.core.Core.start_game">
+    
+  </a>
+  <a name="start_game">
+    
+  </a>
+  <div class="functionHeader">
+    
+    
+    <span class="py-keyword">def</span> <span class="py-defname">start_game</span><span class="function-signature">(self) -&gt; <code>tuple[<wbr></wbr>pygame.Surface, <wbr></wbr>pygame.Surface, <wbr></wbr>tuple[<wbr></wbr>int, <wbr></wbr>int], <wbr></wbr>pygame.Rect]</code></span>:
+    
+    <a class="headerLink" href="#start_game" title="CaptureTheFlag.core.Core.start_game">
+      
+      
+      ¶
+    </a>
+  </div>
+  <div class="docstring functionBody">
+    
+    <div><p>Инициирует начало игры</p><table class="fieldTable"><tr class="fieldStart"><td class="fieldName" colspan="2">Returns</td></tr><tr><td class="fieldArgContainer"><code>tuple[<wbr></wbr>pygame.Surface, <wbr></wbr>pygame.Surface, <wbr></wbr>tuple[<wbr></wbr>int, <wbr></wbr>int], <wbr></wbr>pygame.Rect]</code></td><td class="fieldArgDesc">данные по отрисовке заднего фона</td></tr><tr class="fieldStart"><td class="fieldName" colspan="2">Raises</td></tr><tr><td class="fieldArgContainer"><code>ValueError</code></td><td>если к началу игры карта не была выбрана</td></tr></table></div>
+  </div>
+</div><div class="basemethod">
+  
+  
+  <a name="CaptureTheFlag.core.Core.write_frame">
+    
+  </a>
+  <a name="write_frame">
+    
+  </a>
+  <div class="functionHeader">
+    
+    
+    <span class="py-keyword">def</span> <span class="py-defname">write_frame</span><span class="function-signature">(self)</span>:
+    
+    <a class="headerLink" href="#write_frame" title="CaptureTheFlag.core.Core.write_frame">
+      
+      
+      ¶
+    </a>
+  </div>
+  <div class="docstring functionBody">
+    
+    <div><p>Записывает текущий фрейм если запись повторов включена</p></div>
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="CaptureTheFlag.core.Core.collides">
+    
+  </a>
+  <a name="collides">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">collides</span>: List[gamemap.Platform] =
+    
+    <a class="headerLink" href="#collides" title="CaptureTheFlag.core.Core.collides">
+      
+      
+      ¶
+    </a>
+  </div>
+  <div class="functionBody">
+    
+    <div><p>список платформ</p></div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="CaptureTheFlag.core.Core.is_game">
+    
+  </a>
+  <a name="is_game">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">is_game</span>: bool =
+    
+    <a class="headerLink" href="#is_game" title="CaptureTheFlag.core.Core.is_game">
+      
+      
+      ¶
+    </a>
+  </div>
+  <div class="functionBody">
+    
+    <div><p>идёт ли сейчас игра</p></div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="CaptureTheFlag.core.Core.map">
+    
+  </a>
+  <a name="map">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">map</span>: gamemap.Map =
+    
+    <a class="headerLink" href="#map" title="CaptureTheFlag.core.Core.map">
+      
+      
+      ¶
+    </a>
+  </div>
+  <div class="functionBody">
+    
+    <div><p>игровая карта</p></div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="CaptureTheFlag.core.Core.replay_file">
+    
+  </a>
+  <a name="replay_file">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">replay_file</span>: TextIOWrapper =
+    
+    <a class="headerLink" href="#replay_file" title="CaptureTheFlag.core.Core.replay_file">
+      
+      
+      ¶
+    </a>
+  </div>
+  <div class="functionBody">
+    
+    <div><p>файл, в который записывается запись игры, если данная функция включена</p></div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="CaptureTheFlag.core.Core.should_write_replay">
+    
+  </a>
+  <a name="should_write_replay">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">should_write_replay</span>: bool =
+    
+    <a class="headerLink" href="#should_write_replay" title="CaptureTheFlag.core.Core.should_write_replay">
+      
+      
+      ¶
+    </a>
+  </div>
+  <div class="functionBody">
+    
+    <div><p>нужно ли записывать текущую игру</p></div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="CaptureTheFlag.core.Core.teams">
+    
+  </a>
+  <a name="teams">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">teams</span>: Dict[str, Team] =
+    
+    <a class="headerLink" href="#teams" title="CaptureTheFlag.core.Core.teams">
+      
+      
+      ¶
+    </a>
+  </div>
+  <div class="functionBody">
+    
+    <div><p>хранилище команд</p></div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="CaptureTheFlag.core.Core.thorns">
+    
+  </a>
+  <a name="thorns">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">thorns</span>: List[gamemap.Platform] =
+    
+    <a class="headerLink" href="#thorns" title="CaptureTheFlag.core.Core.thorns">
+      
+      
+      ¶
+    </a>
+  </div>
+  <div class="functionBody">
+    
+    <div><p>список шипов</p></div>
+    
+  </div>
+</div><div class="baseinstancevariable">
+  
+  
+  <a name="CaptureTheFlag.core.Core.winner">
+    
+  </a>
+  <a name="winner">
+    
+  </a>
+  <div class="functionHeader">
+    
+    <span class="py-defname">winner</span>: Player =
+    
+    <a class="headerLink" href="#winner" title="CaptureTheFlag.core.Core.winner">
+      
+      
+      ¶
+    </a>
+  </div>
+  <div class="functionBody">
+    
+    <div><p>победитель текущей игры</p></div>
+    
+  </div>
+</div>
+        </div>
+      
+      </div>
+    </div>
+
+    <footer class="navbar navbar-default">
+
+  
+  <div class="container-fluid">
+    <a href="index.html">API Documentation</a> for CaptureTheFlag,
+  generated by <a href="https://github.com/twisted/pydoctor/">pydoctor</a>
+    24.11.0 at 2024-12-16 08:41:52.
+  </div>
+
+  <!-- Search related scripts needs to be loaded at the end of HTML 
+    parsing not to introduce overhead and display HTML data asap -->
+  <script src="ajax.js" type="text/javascript"></script>
+  <script src="searchlib.js" type="text/javascript"></script>
+  <script src="search.js" type="text/javascript"></script>
+
+</footer>
+  
+    <script src="pydoctor.js" type="text/javascript"></script>
+
+  </body>
+</html>

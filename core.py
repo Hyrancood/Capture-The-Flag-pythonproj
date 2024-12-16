@@ -341,7 +341,7 @@ def str_to_player_abilities(string: str) -> List[abilities.Ability|None]:
     """
     if not isinstance(string, str):
         raise TypeError
-    return [str_to_ability(ability)[0] for ability in string.split(";")]
+    return [str_to_ability(ability) for ability in string.split(";")]
 
 def str_to_ability(string: str) -> abilities.Ability:
     """

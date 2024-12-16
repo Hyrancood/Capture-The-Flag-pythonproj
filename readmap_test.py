@@ -1,3 +1,4 @@
+"""Тесты readmap"""
 import unittest
 
 import readmap

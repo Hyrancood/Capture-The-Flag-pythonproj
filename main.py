@@ -1,13 +1,23 @@
+"""Главное меню"""
 import pygame
 
 import config
 import core
 
 i = 0
+"""Указатель кнопки по вертикали"""
 j = 0
+"""Указатель кнопки по горизонтали"""
 NEXT = ["PREGAME", "REPLAYS"]
+"""Следующее окно"""
 
 def run(**kwargs):
+	"""
+	Обработка текущего окна
+
+	:param kwargs: данные игры
+	:return: следующее окно
+	"""
 	global i, j
 	for event in kwargs["events"]:
 		if event.type == pygame.KEYDOWN:

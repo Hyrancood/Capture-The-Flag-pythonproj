@@ -24,15 +24,14 @@ MODES = {
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument("config", nargs='?', const=1, type=str,
-                            default="path='paths.config'", help="use path file as config")
+    arg_parser.add_argument("--path", nargs='?', const=1, type=str,
+                            default="paths.config", help="use path file as config")
     args = arg_parser.parse_args()
-    path = str(args.config)
-    if re.fullmatch("path='.*'", path):
-        config.read_config(path[6:-1])
-        pregame.load_assets()
-    else:
-        raise argparse.ArgumentError(args.config, "config error")
+    path = str(args.path)
+    if re.fullmatch("'.*'", path) or re.fullmatch("\".*\"", path):
+        path = path[1:-1]
+    config.read_config(path)
+    pregame.load_assets()
     pygame.init()
     pygame.font.init()
     font = pygame.font.SysFont("Comic Sans MS", 36)

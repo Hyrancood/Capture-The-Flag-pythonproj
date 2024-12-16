@@ -106,7 +106,7 @@ class Core:
         """
         Записывает текущий фрейм если запись повторов включена
         """
-        if not self.should_write_replay:
+        if self.should_write_replay:
             self.replay_file.writelines([f"{team_in_game_to_str(self.teams['red'])}\n",
                                          f"{team_in_game_to_str(self.teams['blue'])}\n"])
 
@@ -265,7 +265,7 @@ def str_to_rect(string: str) -> pygame.Rect:
     :return: десериализованный Rect
     :raise TypeError: если была передана не строка
     :raises ValueError:
-        если был передан не сериализованный Rect вида '\d,\d,\d,\d'
+        если был передан не сериализованный Rect вида 'int,int,int,int'
     """
     if not isinstance(string, str):
         raise TypeError

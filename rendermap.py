@@ -1,18 +1,34 @@
+"""Рендерер карты"""
+from typing import List, Tuple
+
 import pygame
 
 import config
 import gamemap as gmap
 
-BG = None
 
+def get_platform(name:str) -> pygame.Surface:
+    """
+    Получение текстуры земли по укороченному названию
 
-def get_platform(name):
+    :param name: укороченное название
+    :return: загруженная текстура
+    """
     name = name.replace("-", "_") + "_ground" if name != "ground" else name
     return config.get(f"ground/{name}.png")
 
 
 
-def get_sprite(x, y, map_platforms, sizes):
+def get_sprite(x: int, y: int, map_platforms: List[List[int]], sizes:Tuple[int, int]) -> pygame.Surface:
+    """
+    Получение текстуры платформы в зависимости от наличия и расположения соседей
+
+    :param x: 'x'-кордината платформы
+    :param y: 'y'-кордината платформы
+    :param map_platforms: матрица карты с платформами
+    :param sizes: размеры карты
+    :return: текстура
+    """
     sprite = get_platform("ground")
     if y - 1 >= 0 and x + 1 < sizes[0]:
         if map_platforms[y - 1][x] and map_platforms[y][x+1] and not map_platforms[y-1][x+1]:
@@ -55,7 +71,13 @@ def get_sprite(x, y, map_platforms, sizes):
     return sprite
 
 
-def map_surface(gamemap: gmap.Map):
+def map_surface(gamemap: gmap.Map) -> pygame.Surface:
+    """
+    Отрисовка игровой карты
+
+    :param gamemap: игровая карта
+    :return: отрисованное изображение карты
+    """
     sizes = gamemap.get_sizes()
     sizes32 = (sizes[0]*32, sizes[1]*32)
     surface = pygame.Surface(sizes32)
@@ -77,7 +99,13 @@ def map_surface(gamemap: gmap.Map):
     return surface
 
 
-def draw_background_for_map(gamemap: gmap.Map):
+def draw_background_for_map(gamemap: gmap.Map) -> Tuple[pygame.Surface, pygame.Surface, Tuple[int, int], pygame.Rect]:
+    """
+    Отрисовывает тёмный задний фон и рассчитывает где надо отрисовать изображение карты
+
+    :param gamemap: игровая карта
+    :return: карта, отрисованная на чёрном фоне; отрисованная карта; позиция отрисовки; Rect карты
+    """
     surface = pygame.Surface((1280, 720))
     surface.fill((20, 20, 20))
     sizes = gamemap.get_sizes()
@@ -89,7 +117,13 @@ def draw_background_for_map(gamemap: gmap.Map):
     surface.blit(rendered_map, (x, y))
     return surface, rendered_map, (x, y), pygame.Rect(x, y, width, height)
 
-def draw_background_for_replay(gamemap: gmap.Map):
+def draw_background_for_replay(gamemap: gmap.Map) -> pygame.Surface:
+    """
+    Отрисовывает карту для воспроизведения
+
+    :param gamemap: игровая карта, сохранённая в повторе
+    :return: отрисованная карта
+    """
     if not isinstance(gamemap, gmap.Map):
         raise TypeError
     surface = pygame.Surface((1280, 720))

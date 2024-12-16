@@ -1,3 +1,4 @@
+"""Основа игры"""
 import argparse
 import re
 
@@ -11,6 +12,7 @@ import pregame
 import replays
 
 USE = main.run
+"""Текущий исполнительный файл"""
 MODES = {
 	"MAIN": main.run,
 	"REPLAYS": replays.run,
@@ -18,6 +20,7 @@ MODES = {
 	"PREGAME": pregame.run,
 	"GAME": game.run,
 }
+"""Список всех исполняющих файлов"""
 
 
 if __name__ == "__main__":

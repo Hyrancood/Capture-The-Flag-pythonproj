@@ -1,3 +1,4 @@
+"""Тесты игроков"""
 import pytest
 import pygame
 from core import Team

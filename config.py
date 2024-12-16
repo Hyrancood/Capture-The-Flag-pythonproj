@@ -1,30 +1,68 @@
+"""Хранит конфигурационную информацию и загруженные ресурсы"""
+
 import pathlib
 import re
+from typing import Dict
 
 import pygame
 
 
 class Paths:
-    def __init__(self, assets=None, maps=None, replays=None):
+    """
+    Хранит используемые игрой пути
+
+    :ivar assets: путь к ресурсам (текстуры и т.п.)
+    :type assets: str
+    :ivar maps: путь к файлам игровых карт
+    :type maps: str
+    :ivar replays: путь к папке с записями игр
+    :type replays: str
+    """
+    def __init__(self, assets:str=None, maps:str=None, replays:str=None):
+        """
+        Создание экземпляра
+
+        :param assets: путь к ресурсам
+        :param maps: путь к картам
+        :param replays: путь к записям
+        """
         self.assets = assets
         self.maps = maps
         self.replays = replays
 
 
 INSTANCE = Paths()
+"""Используемый экземляр"""
 
 
-def load_assets(dir: str) -> dict:
+def load_assets(directory: str) -> Dict[str, pygame.Surface]:
+    """
+    Рекурсивно загружает все ресурсы из указанной директории (и вложенных)
+
+    :param directory: папка с ресурсами
+    :return: словарь с загруженными ресурсами
+    """
     result = {}
-    for path in pathlib.Path(dir).iterdir():
+    for path in pathlib.Path(directory).iterdir():
         if path.is_dir():
-            result.update(load_assets(f"{dir}/{path.name}"))
+            result.update(load_assets(f"{directory}/{path.name}"))
             continue
-        result[f"{dir}/{path.name}"] = pygame.image.load(f"{dir}/{path.name}")
+        result[f"{directory}/{path.name}"] = pygame.image.load(f"{directory}/{path.name}")
     return result
 
 
 def read_config(path: str):
+    """
+    Считывание переданного конфиг-файла
+
+    :param path: путь к конфигурационному файлу
+    :raises ValueError:
+        если переданный путь оказался директорией, а не файлом
+        если в файле оказалась непредусмотренная строка
+        если указанный в конфиге путь вёл на файл, а не на директорию
+        если обязательная директория не была указана
+        если в папке с ресурсами не оказалось некоторых файлов
+    """
     global INSTANCE
     file = pathlib.Path(path)
     if file.is_dir():
@@ -65,5 +103,11 @@ def read_config(path: str):
         raise ValueError(f"Folder {assets_path} hasn't some assets: '{files}")
 
 def get(asset_name: str) -> pygame.Surface:
+    """
+    Возвращает загруженный файл по его имени
+
+    :param asset_name: название ресурса
+    :return: ресурс
+    """
     global INSTANCE
     return INSTANCE.assets[1].get(f"{INSTANCE.assets[0]}/{asset_name}")

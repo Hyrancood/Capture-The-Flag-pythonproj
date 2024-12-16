@@ -1,9 +1,9 @@
+"""Модуль воспроизведения записей игр"""
 import pathlib
 import re
 import subprocess
 
 import pygame
-from PIL.ImageChops import screen
 
 import config
 import core
@@ -11,14 +11,28 @@ import gamemap
 import rendermap
 
 FILES = None
+"""Доступные к выбору файлы"""
 REPLAY_FILE = None
+"""Текущий проигрываемый файл"""
 BACKGROUND = None
+"""Отрисованный задний план"""
 REPLAY = True
+"""Идёт ли сейчас воспроизведение"""
 INDEX = 0
+"""Указывает на выбранный из 'FILES' файл"""
 BUTTON = 1
+"""Указывает на одну из 3 кнопок"""
 CAN_RUN = False
+"""Можно ли начать сейчас воспроизведение реплея"""
 
 def start_replay(file_path: str, **kwargs):
+    """
+    Начинает воспроизведения записи
+
+    :param file_path: путь к файлу для воспроизведения
+    :param kwargs: дополнительные данные
+    :keyword screen: экран
+    """
     global REPLAY_FILE, BACKGROUND, REPLAY
     REPLAY_FILE = open(file_path, 'r', encoding="UTF-8")
     BACKGROUND = core.str_to_rect(REPLAY_FILE.readline().strip())
@@ -38,6 +52,13 @@ def start_replay(file_path: str, **kwargs):
 
 
 def draw_frame(**kwargs):
+    """
+    Отрисовывает текущий кадр записи
+
+    :param kwargs: данные для отрисовки
+    :keyword screen: экран
+    :raise ValueError: если попытаться отрисовать None файл
+    """
     global REPLAY_FILE, BACKGROUND, REPLAY
     if REPLAY_FILE is None:
         raise ValueError
@@ -45,16 +66,16 @@ def draw_frame(**kwargs):
     screen.blit(BACKGROUND[0], (0, 0))
     for team_name in ('red', 'blue'):
         line = REPLAY_FILE.readline().strip()
-        if line == "":
+        if line == "" :
             REPLAY_FILE = None
-            return "MAIN"
+            return
         if line == "end":
             font = pygame.font.SysFont("Comic Sans MS", 80)
             screen.blit(font.render(REPLAY_FILE.readline().strip(), False,
                                               (255, 255, 255)), (220, 300))
             pygame.display.flip()
             REPLAY = False
-            return "REPLAYS"
+            return
         while line.startswith("draw-"):
             rect, color = line[5:].split("-")
             rect, color = core.str_to_rect(rect), tuple(map(int, color.split(",")))
@@ -74,9 +95,11 @@ def draw_frame(**kwargs):
             flag.render_at(screen)
 
 def open_replays_folder():
+    """Открывает папку с реплеями в проводнике"""
     subprocess.Popen(f'explorer "{pathlib.Path(config.INSTANCE.replays).absolute().name}"')
 
 def updates_files():
+    """Обновляет файлы"""
     global FILES, CAN_RUN, INDEX
     FILES = []
     for file in pathlib.Path(config.INSTANCE.replays).iterdir():
@@ -89,19 +112,16 @@ def updates_files():
     CAN_RUN = len(FILES) > 0
     INDEX = 0
 
-
-def choose_file(**kwargs):
-    global FILES
-    if FILES is None:
-        updates_files()
-    print(FILES)
-    for event in kwargs['events']:
-        if event.type == pygame.KEYDOWN:
-            if event.key == 13:
-                return None
-    return None
-
 def draw_replay(screen: pygame.Surface, index: int, y: int, chosen: bool=False):
+    """
+    Отрисовывает кнопку реплея
+
+    :param screen: поверхность, на которую надо отрисовать
+    :param index: указатель на файл из массива
+    :param y: 'y'-координата, на которой надо отрисовать кнопку
+    :param chosen: выбрана ли эта кнопка
+    :raise ValueError: если index выходит за рамки списка файлов
+    """
     global FILES
     if index >= len(FILES):
         raise ValueError
@@ -113,12 +133,21 @@ def draw_replay(screen: pygame.Surface, index: int, y: int, chosen: bool=False):
     screen.blit(font.render(file[1], False, (0, 0, 0)), (165, y + 18))
 
 def draw_button(screen: pygame.Surface, asset: str, index: int, x: int):
+    """
+    Отрисовка кнопки управления
+
+    :param screen: поверхность для отрисовки
+    :param asset: текстура
+    :param index: указатель выбранной кнопки
+    :param x: 'x'-координата для отрисовки
+    """
     global BUTTON
     surface = config.get(asset).copy()
     surface.set_alpha(255 if index == BUTTON else 150)
     screen.blit(surface, (x, 619))
 
 def run(**kwargs):
+    """Логика окна"""
     global REPLAY_FILE, BACKGROUND, REPLAY, INDEX, FILES, BUTTON, CAN_RUN
     screen = kwargs['screen']
     if REPLAY_FILE is None:

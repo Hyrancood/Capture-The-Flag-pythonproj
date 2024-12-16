@@ -1,8 +1,35 @@
+"""Игровая карта"""
+from typing import Tuple
+
 import pygame
 
 
 class Map:
+    """
+        Игровая карта
+
+        :ivar name: названия карты
+        :type name: Dict[str, str]
+        :ivar rect: размеры карты на экране
+        :type rect: pygame.Rect
+        :ivar sizes: размеры карты
+        :type sizes: Dict[str, int]
+        :ivar platforms: список платформ для перемещения
+        :type platforms: List[Platform]
+        :ivar thorns: список опасных шипов
+        :type thorns: List[Platform]
+        :ivar flags: флаги
+        :type flags: Dict[str, Tuple[int, int]]
+        :ivar map: матрица карты
+        :type map: List[List[int]]
+    """
     def __init__(self, **data):
+        """
+        Создаёт новый экземпляр карты по переданным данным
+
+        :param data: данные для воссоздания карты
+        :keyword replay: индикатор того, что карта воспроизводится из записи, а не из файла карты
+        """
         if data.get('replay', False):
             self.name = {"ru": "", "en": ""}
             self.rect = pygame.Rect(*data['rect'])
@@ -40,15 +67,30 @@ class Map:
                 self.map[y][x] = 3
                 self.flags[color] = (x, y)
 
-    def printmap(self):
-        for line in self.map:
-            print(*line)
+    def get_sizes(self) -> Tuple[int, int]:
+        """
+        Возвращает размеры карты (в ячейках) в виде кортежа
 
-    def get_sizes(self):
+        :return: размеры карты
+        """
         return self.sizes['x'], self.sizes['y']
 
 
 class Platform:
+    """
+    Статичные объекты на карте
+
+    :ivar rect: хитбокс объекта
+    :type rect: pygame.Rect
+    :ivar x: 'x'-координата объекта
+    :type x: int
+    :ivar y: 'y'-координата объекта
+    :type y: int
+    :ivar w: ширина
+    :type w: int
+    :ivar h: высота объекта
+    :type h: int
+    """
     def __init__(self, **kwargs):
         if kwargs.get('replay', False):
             self.rect = pygame.Rect(*kwargs['rect'])
@@ -60,11 +102,27 @@ class Platform:
             map_y = kwargs['map_y']
             self.rect = pygame.Rect(32*self.x, 32*(map_y - self.y - self.h), 32*self.w, 32*self.h)
 
-    def get_x_range(self):
+    def get_x_range(self) -> range:
+        """
+        Возвращает диапазон от начала 'x'-координат до конца объекта
+
+        :return: диапазон (x, x+w)
+        """
         return range(self.x, self.x + self.w)
 
-    def get_y_range(self):
+    def get_y_range(self) -> range:
+        """
+            Возвращает диапазон от начала 'y'-координат до конца объекта
+
+            :return: диапазон (y, y+h)
+        """
         return range(self.y, self.y + self.h)
 
-    def get_y_range_for_map(self, gmap: Map):
+    def get_y_range_for_map(self, gmap: Map) -> range:
+        """
+            Возвращает диапазон от начала 'y'-координат до конца объекта для карты (разные системы координат)
+
+            :param gmap: игровая карта
+            :return: диапазон (map_y - y - h, map_y - y)
+        """
         return range(gmap.sizes['y'] - self.y - self.h, gmap.sizes['y'] - self.y)

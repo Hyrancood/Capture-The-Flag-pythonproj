@@ -1,11 +1,20 @@
+"""Основная игра"""
 import pygame
 
 import core
 
 BG = None
+"""Задний фон"""
 
 
-def awards(**kwargs):
+def awards(**kwargs) -> str:
+    """
+    Этап 'награждения'
+
+    :param kwargs: данные игры
+    :keyword screen: экран
+    :return: Следующее окно
+    """
     font = pygame.font.SysFont("Comic Sans MS", 80)
     screen = kwargs['screen']
     name = 'Синий' if core.instance.winner.color == 'blue' else 'Красный'
@@ -18,7 +27,14 @@ def awards(**kwargs):
                 return "MAIN"
     pygame.display.update(BG[3])
 
-def game(**kwargs):
+def game(**kwargs) -> bool:
+    """
+    Основной этап игры
+
+    :param kwargs: данные игры
+    :keyword screen: экран
+    :return: закончилась ли игра или нет
+    """
     global BG
     screen = kwargs["screen"]  # Surface
     if not core.instance.is_game:

@@ -1,3 +1,4 @@
+"""Тесты core"""
 import pytest
 import pygame
 import abilities

@@ -1,3 +1,4 @@
+"""Тесты readmap"""
 import unittest
 
 import readmap
@@ -22,20 +23,20 @@ class MyTestCase(unittest.TestCase):
             readmap.parse_object(10)
         with self.assertRaises(ValueError):
             readmap.parse_object("")
-        with self.assertRaises(ValueError):
+        with self.assertRaises(SyntaxError):
             readmap.parse_object("x:b,")
-        with self.assertRaises(ValueError):
+        with self.assertRaises(SyntaxError):
             readmap.parse_object("x::b")
         with self.assertRaises(ValueError):
             readmap.parse_object("x:,")
-        with self.assertRaises(ValueError):
+        with self.assertRaises(SyntaxError):
             readmap.parse_object("x: 15, x: 33")
 
     def test_file_parser(self):
         self.assertEqual(readmap.parse_file(["key:", "- x: 5, y:10"]), {'key': [{'x': 5, 'y': 10}]})
         self.assertEqual(readmap.parse_file(["key:", "second:"]), {'key': [], 'second': []})
         self.assertEqual(readmap.parse_file(["key:", "- x: 5, y:10", "-x: 15"]), {'key': [{'x': 5, 'y': 10}, {'x':15}]})
-        with self.assertRaises(ValueError):
+        with self.assertRaises(SyntaxError):
             readmap.parse_file(["key", "-x:5"])
 
     def test_name_validator(self):
@@ -46,7 +47,7 @@ class MyTestCase(unittest.TestCase):
             readmap.is_name_valid([])
         with self.assertRaises(ValueError):
             readmap.is_name_valid(["rue:название,en: name"])
-        with self.assertRaises(ValueError):
+        with self.assertRaises(SyntaxError):
             readmap.is_name_valid(["ru: название, ru: звание"])
 
     def test_sizes_validator(self):

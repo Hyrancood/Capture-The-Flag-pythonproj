@@ -1,3 +1,4 @@
+"""Выбор способностей перед игрой"""
 import pygame
 
 import abilities
@@ -6,35 +7,69 @@ import core
 
 
 class Button:
+	"""
+	Класс кнопки
+
+	"ivar is_pushed: нажата ли кнопка
+	:type is_pushed: bool
+	:ivar sprite: спрайт кнопки
+	:type sprite: pygame.Surface
+	:ivar sprite_pushed: спрайт нажатой кнопки
+	:type sprite_pushed: pygame.Surface
+	"""
 	def __init__(self, sprite: str, sprite_pushed: str):
+		"""
+		Создание новой кнопки
+
+		:param sprite: путь к спрайту
+		:param sprite_pushed: путь к нажатому спрайту
+		"""
 		self.is_pushed = False
 		self.sprite = config.get(sprite)
 		self.sprite_pushed = config.get(sprite_pushed)
 
 	def press(self):
+		"""Нажатие кнопки"""
 		self.is_pushed = True
 
 	def unpress(self):
+		"""Отжатие кнопки"""
 		self.is_pushed = False
 
 	def get_sprite(self):
+		"""Текущий спрайт"""
 		return self.sprite_pushed if self.is_pushed else self.sprite
 
 
 class AbilityButton(Button):
+	"""
+	Кнопка выбора способностей
+
+	:ivar ability: выбираемая способность
+	:type ability: abilities.Ability
+	"""
 	def __init__(self, id: int, ability: abilities.Ability):
+		"""
+		Создание новой кнопки для выбора способности
+
+		:param id: id спрайта способности
+		:param ability: способность
+		"""
 		super().__init__(f"ability{id}.png", f"ability{id}_pushed.png")
 		self.ability = ability
 
 
-
-
 left_buttons = None
+"""Левые кнопки для синего игрока"""
 right_buttons = None
+"""Правые кнопки для синего игрока"""
 i, j = 0, 0
-#номер выбранной кнопки слева и справа соответственно
+"""Номер выбранной кнопки слева и справа соответственно"""
 
 def load_assets():
+	"""
+	Загрузка ресурсов
+	"""
 	global left_buttons, right_buttons
 	left_buttons = [
 		Button("start.png", "start_pushed.png"),
@@ -55,6 +90,12 @@ def load_assets():
 
 
 def run(**kwargs):
+	"""
+	Обработка текущего окна
+
+	:param kwargs: данные игры
+	:return: следующее окно
+	"""
 	global i, j, left_buttons, right_buttons
 	for event in kwargs["events"]:
 		if event.type == pygame.KEYDOWN:

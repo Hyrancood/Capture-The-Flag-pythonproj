@@ -1,5 +1,7 @@
+"""Хранит основную информацию об иге"""
 import datetime
 import pathlib
+from typing import Tuple, List
 
 import pygame
 
@@ -12,7 +14,30 @@ from player import Player
 
 
 class Core:
+    """
+    Хранилище данных игры
+
+    :ivar map: игровая карта
+    :type map: gamemap.Map
+    :ivar collides: список платформ
+    :type collides: List[gamemap.Platform]
+    :ivar thorns: список шипов
+    :type thorns: List[gamemap.Platform]
+    :ivar teams: хранилище команд
+    :type teams: Dict[str, Team]
+    :ivar is_game: идёт ли сейчас игра
+    :type is_game: bool
+    :ivar should_write_replay: нужно ли записывать текущую игру
+    :type should_write_replay: bool
+    :ivar replay_file: файл, в который записывается запись игры, если данная функция включена
+    :type replay_file: TextIOWrapper
+    :ivar winner: победитель текущей игры
+    :type winner: Player
+    """
     def __init__(self):
+        """
+        Создание нового экземпляра
+        """
         self.map = None
         self.collides = []
         self.thorns = []
@@ -21,17 +46,16 @@ class Core:
             "blue": Team(Player("blue"), None)
         }
         self.is_game = False
-        self.should_write_replay = True
+        self.should_write_replay = False
         self.replay_file = None
         self.winner = None
 
-    def start_game(self):
+    def start_game(self) -> Tuple[pygame.Surface, pygame.Surface, Tuple[int, int], pygame.Rect]:
         """
         Инициирует начало игры
 
         :raises ValueError: если к началу игры карта не была выбрана
         :return: данные по отрисовке заднего фона
-        :rtype: tuple
         """
         if self.map is None:
             raise ValueError
@@ -65,6 +89,11 @@ class Core:
         return background
 
     def set_winner(self, winner: player.Player):
+        """
+        Устанавливает победителя и завершает игру
+
+        :param winner: игрок, ставшим победителем
+        """
         self.winner = winner
         self.is_game = False
         if self.should_write_replay:
@@ -74,11 +103,12 @@ class Core:
             self.replay_file = None
 
     def write_frame(self):
+        """
+        Записывает текущий фрейм если запись повторов включена
+        """
         if not self.should_write_replay:
-            return
-        self.replay_file.writelines([f"{team_in_game_to_str(self.teams['red'])}\n",
-                                     f"{team_in_game_to_str(self.teams['blue'])}\n"])
-        pass
+            self.replay_file.writelines([f"{team_in_game_to_str(self.teams['red'])}\n",
+                                         f"{team_in_game_to_str(self.teams['blue'])}\n"])
 
     def set_map(self, gmap: gamemap.Map):
         """
@@ -100,19 +130,50 @@ class Core:
 
 
 class Team:
-    def __init__(self, player:Player, flag):
-        self.player = player
+    """
+    Класс команды, хранящий игрока и его флаг
+
+    :ivar player: игрок
+    :type player: player.Player
+    :ivar flag: флаг
+    :type flag: Flag
+    """
+    def __init__(self, p :Player, flag: "Flag"):
+        """
+        Создание нового экземпляра команды
+
+        :param p: игрок
+        :param flag: флаг
+        """
+        self.player = p
         self.flag = flag
 
 
 class Flag:
+    """
+    Класс флага игрока
+
+    :ivar color: цвет флага ('red' или 'blue')
+    :type color: str
+    :ivar x: 'x'-кордината флага
+    :type x: int
+    :ivar y: 'y'-кордината флага
+    :type y: int
+    :ivar rect: хитбокс флага
+    :ivar rect: pygame.Rect
+    """
     def __init__(self, x: int, y: int, color: str, rect: pygame.Rect =None):
         """
         Создаёт объект флага по координатам карты
 
         :param x: x-координата 'ячейки' в которой находится флаг
         :param y: y-координата 'ячейки' в которой находится флаг
+        :param color: цвет флага
+        :param rect: хитбокс флага
+        :raise ValueError: если color не равен 'red' или 'blue'
         """
+        if not (color in ('red', 'blue')):
+            raise ValueError(f"Flag's color should be 'red' or 'blue', get {color}")
         self.color = color
         if rect is None:
             self.init_x, self.init_y = x, y - 16
@@ -124,17 +185,21 @@ class Flag:
         self.sprite.fill((255, 0, 0) if color == "red" else (0, 0, 255))
         self.is_carried = False
 
-    def shift(self, offset):
+    def shift(self, offset: Tuple[int, int]):
+        """
+        Смещает флаг на указанное расстояние
+
+        :param offset: (x, y) вектор смещения флага
+        """
         self.init_x += offset[0]
         self.init_y += offset[1]
         self.rect.move_ip(*offset)
 
-    def get_init_cords(self) -> tuple:
+    def get_init_cords(self) -> Tuple[int, int]:
         """
         Возвращает координаты флага
 
         :return: координаты на экране
-        :rtype: tuple
         """
         return self.init_x, self.init_y
 
@@ -144,7 +209,7 @@ class Flag:
 
         :param screen: элемент на котором нужно отобразить флаг
         :type screen: pygame.Surface
-
+        :raise TypeError: если screen не является pygame.Surfaces
         """
         if not isinstance(screen, pygame.Surface):
             raise TypeError
@@ -153,25 +218,55 @@ class Flag:
 
 
 instance = Core()
+"""Экземпляр текущей игры"""
 
 
-def array_of_rects_to_str(rects_list: list):
+def array_of_rects_to_str(rects_list: List[pygame.Rect]) -> str:
+    """
+    Сереализует список Rect'ов в строку
+
+    :param rects_list: список для сериализации
+    :return: сериализованный список
+    """
     result = ""
     for rect in rects_list:
         result += rect_to_str(rect) + ";"
     return result[:-1]
 
-def str_to_array_of_rects(string: str):
+def str_to_array_of_rects(string: str) -> List[pygame.Rect]:
+    """
+    Десерилизует список Rect'ов из строки
+
+    :param string: сериализованный список
+    :return: список Rect'ов
+    :raise TypeError: если была передана не строка
+    """
     if not isinstance(string, str):
         raise TypeError
     return [str_to_rect(rect) for rect in string.split(";")]
 
-def rect_to_str(rect: pygame.Rect):
+def rect_to_str(rect: pygame.Rect) -> str:
+    """
+    Сериализует Rect в строку
+
+    :param rect: Rect для сериализации
+    :return: итог сериализации
+    :raise TypeError: если был передан не Rect
+    """
     if not isinstance(rect, pygame.Rect):
         raise TypeError
     return f"{rect.left},{rect.top},{rect.width},{rect.height}"
 
-def str_to_rect(string: str):
+def str_to_rect(string: str) -> pygame.Rect:
+    """
+    Десериализует строку в Rect
+
+    :param string: сериализованный Rect
+    :return: десериализованный Rect
+    :raise TypeError: если была передана не строка
+    :raises ValueError:
+        если был передан не сериализованный Rect вида '\d,\d,\d,\d'
+    """
     if not isinstance(string, str):
         raise TypeError
     if string.count(',')!=3:
@@ -179,17 +274,33 @@ def str_to_rect(string: str):
     else:
         for x in string.split(','):
             try:
-                _ = int(x)
+                int(x)
             except TypeError:
                 raise ValueError
     return pygame.Rect(*map(int, string.split(',')))
 
-def team_to_str(team: "Team"):
+def team_to_str(team: "Team") -> str:
+    """
+    Сериализует команду
+
+    :param team: команда для сериализации
+    :return: итог сериализации
+    :raise TypeError: если был передан не Team
+    """
     if not isinstance(team, Team):
         raise TypeError
     return f"{rect_to_str(team.flag.rect)}-{rect_to_str(team.player.rect)}-{player_abilities_to_str(team.player)}"
 
-def str_to_team(string: str, color: str):
+def str_to_team(string: str, color: str) -> Team:
+    """
+    Десериализует строку в команду
+
+    :param string: сериализованная команда
+    :param color: цвет команды
+    :return: десериализованная команда
+    :raise TypeError: если 'color' или 'string' не являются строками
+    :raise ValueError: если 'color' отличается от 'red' и 'blue'
+    """
     if not isinstance(string, str):
         raise TypeError
     if not isinstance(color, str):
@@ -203,7 +314,14 @@ def str_to_team(string: str, color: str):
     flag = Flag(0, 0, color, str_to_rect(flag_rect))
     return Team(p, flag)
 
-def player_abilities_to_str(p: player.Player):
+def player_abilities_to_str(p: player.Player) -> str:
+    """
+    Сериализует способности игрока
+
+    :param p: игрок, чьи способности надо сериализовать
+    :return: итог сериализации
+    :raise TypeError: если 'p' не является объектом класса player.Player
+    """
     if not isinstance(p, player.Player):
         raise TypeError
     result = ""
@@ -213,27 +331,57 @@ def player_abilities_to_str(p: player.Player):
             result += f"{ability.sprite_id},{ability.cooldown},{ability.ticks};"
     return result[:-1]
 
-def str_to_player_abilities(string: str):
+def str_to_player_abilities(string: str) -> List[abilities.Ability|None]:
+    """
+    Десериализует способности игрока из строки
+
+    :param string: сериализованные способности
+    :return: список способностей игрока
+    :raise TypeError: если была переданна не строка
+    """
     if not isinstance(string, str):
         raise TypeError
     return [str_to_ability(ability)[0] for ability in string.split(";")]
 
-def str_to_ability(string: str):
+def str_to_ability(string: str) -> abilities.Ability:
+    """
+    Десериализует способность игрока из строки
+
+    :param string: сериализованная способность
+    :return: итог десериализации
+    :raise TypeError: если была передана не строка
+    """
     if not isinstance(string, str):
         raise TypeError
     if string == "":
-        return None, None
+        return None
     sprite_id, cooldown, ticks = map(int, string.split(","))
     ability = abilities.Ability(sprite_id, cooldown, 0)
     ability.ticks = ticks
-    return ability, ticks
+    return ability
 
 def team_in_game_to_str(team: "Team"):
+    """
+    Скриализует игровое состояние команды в строку
+
+    :param team: команда для сериализации
+    :return: итог сериализации
+    :raise TypeError: если был передан объект класса Team
+    """
     if not isinstance(team, Team):
         raise TypeError
     return f"{team.flag.is_carried}-{team.player.dead}-{team.player.carried_flag is not None}-{rect_to_str(team.player.rect)}-{player_abilities_to_str(team.player)}"
 
 def str_to_team_in_game(string: str, team: "Team"):
+    """
+    Десериализует игровое состояние команду из строки
+
+    :param string: сериализованное состояние
+    :param team: команда, на которую будет применяться изменения
+    :raises TypeError:
+        если переданная 'string' не является строкой
+        если переданная 'team' не является объектом Team
+    """
     if not isinstance(string, str):
         raise TypeError
     if not isinstance(team, Team):

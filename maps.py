@@ -1,3 +1,4 @@
+"""Выбор карты для игры"""
 import pathlib
 import subprocess
 
@@ -8,18 +9,31 @@ import core
 import gamemap as gmap
 import readmap
 
-background = None
-reload_button = None
 
 MAPS = None
+"""Доступные для выбора карты"""
 NEXT_MODE = {"CHOOSE_MAP": "BUTTONS", "BUTTONS": "CHOOSE_MAP"}
+"""Смена режимов"""
 MODE = "CHOOSE_MAP"
+"""Текущий режим"""
 CAN_PLAY = False
+"""Можно ли начинать игру"""
 index = 0
+"""Индекс выбранной карты"""
 btn = 1
+"""Указатель выбранной кнопки управления"""
 
 
 def draw_map_button(screen: pygame.Surface, gamemap: gmap.Map, font: pygame.font.Font, y: int, chosen=False):
+    """
+    Отрисовка кнопки карты
+
+    :param screen: экран
+    :param gamemap: игровая карта (уже распаршена из файла)
+    :param font: шрифт
+    :param y: 'y'-координата для отрисовки
+    :param chosen: выбрана ли эта карта
+    """
     btn = config.get("map_choose_button.png").copy()
     if not chosen:
         btn.set_alpha(100)
@@ -31,6 +45,15 @@ def draw_map_button(screen: pygame.Surface, gamemap: gmap.Map, font: pygame.font
 
 
 def draw_error_button(screen: pygame.Surface, font: pygame.font.Font, filename: str, y: int, chosen=False):
+    """
+    Отрисовка кнопки не прошедшей валидацию карты
+
+    :param screen: экран
+    :param font: шрифт для надписей
+    :param filename: название файла
+    :param y: 'y'-координата для отрисовки
+    :param chosen: выбрана ли эта карта
+    """
     btn = config.get("map_choose_error_button.png").copy()
     fnt = font.render(filename, False, (0, 0, 0))
     if not chosen:
@@ -41,6 +64,12 @@ def draw_error_button(screen: pygame.Surface, font: pygame.font.Font, filename: 
 
 
 def update_maps(screen: pygame.Surface, font: pygame.font.Font):
+    """
+    Обновляет карты
+
+    :param screen: поверхность для отрисовки кнопок
+    :param font: шрифт названий карт
+    """
     global MAPS, index, CAN_PLAY
     index = 0
     MAPS = []
@@ -57,21 +86,33 @@ def update_maps(screen: pygame.Surface, font: pygame.font.Font):
             NORMAL.append((screen, readmap.from_file(mapfile), font))
         except ValueError:
             ERROR.append((screen, font, file))
-
+    i = 0
     for mp in NORMAL:
+        if i == 4:
+            break
         MAPS.append((True, draw_map_button, (*mp, y)))
         y += 134
+        i += 1
     for mp in ERROR:
+        if i == 4:
+            break
         MAPS.append((False, draw_error_button, (*mp, y)))
         y += 134
+        i += 1
     if len(NORMAL) > 0:
         CAN_PLAY = True
 
 
 def open_maps_folder():
-    subprocess.Popen(f'explorer "{pathlib.Path("maps").absolute().name}"')
+    """Открывает папку с картами через проводник"""
+    subprocess.Popen(f'explorer "{pathlib.Path(config.INSTANCE.maps).absolute().name}"')
 
 def display_buttons(screen: pygame.Surface):
+    """
+    Отрисовывает кнопки на поверхности
+
+    :param screen: экран для отрисовки
+    """
     global btn
     BUTTONS = [(config.get("open_maps_folder.png"), 115),
                (config.get("maps_menu_play_button.png"), 382),
@@ -84,8 +125,13 @@ def display_buttons(screen: pygame.Surface):
             button[0].set_alpha(150)
         screen.blit(button[0], (button[1], 619))
 
-# noinspection PyTypeChecker
 def run(**kwargs):
+    """
+    Обработка текущего окна
+
+    :param kwargs: данные игры
+    :return: следующее окно
+    """
     global MAPS, index, NEXT_MODE, MODE, btn, CAN_PLAY
     screen = kwargs['screen']
     font = kwargs['font']

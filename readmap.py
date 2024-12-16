@@ -1,24 +1,38 @@
+from multiprocessing.managers import Value
+from typing import List, Tuple
+
 import config
 import gamemap as gmap
 
 
-def parse_value(value):
+def parse_value(value: str):
+
+    if not isinstance(value, str):
+        raise TypeError(f"value should be a str, not '{type(value)}'")
+    if value == "":
+        raise ValueError("Empty value!")
     if all(character.isdigit() for character in value):
         return int(value)
     return value
 
 
-def parse_object(object_string):
+def parse_object(object_string: str) -> dict:
     obj = {}
+    if not isinstance(object_string, str):
+        raise TypeError(f"value should be a str, not '{type(object_string)}'")
+    if object_string == "":
+        raise ValueError("Empty value!")
     for pair in object_string.split(","):
         if pair.count(":") != 1:
             raise ValueError(f"Invalid syntax: object '{pair}' hasn't (or has >1) separator ':'")
         key, value = pair.split(":")
+        if obj.get(key.strip(), None) is not None:
+            raise ValueError(f"Invalid syntax: repeated attribute '{key}'")
         obj[key.strip()] = parse_value(value.strip())
     return obj
 
 
-def parse_map(file_content) -> gmap.Map:
+def parse_file(file_content) -> dict:
     state = "START"
     data = {}
     current_key = None
@@ -39,15 +53,17 @@ def parse_map(file_content) -> gmap.Map:
                 state = "READING"
             else:
                 raise ValueError("Invalid syntax: expected key ending with ':'")
-    return gmap.Map(**data)
+    return data
 
+def parse_map(file_content) -> gmap.Map:
+    return gmap.Map(**parse_file(file_content))
 
-def check_type_valid(parameter, value, t):
+def check_type_valid(parameter: str, value, t: type):
     if not isinstance(value, t):
-        raise ValueError(f"Invalid value: '{parameter}' should be integer, not {type(value)}")
+        raise TypeError(f"Invalid value: '{parameter}' should be integer, not {type(value)}")
 
 
-def is_name_valid(values):
+def is_name_valid(values: List[str]):
     if len(values) == 0:
         raise ValueError("Invalid structure: name section has no objects")
     parsed = [parse_object(val) for val in values]
@@ -59,13 +75,11 @@ def is_name_valid(values):
         for lang in obj:
             if lang != "ru" and lang != "en":
                 raise ValueError(f"Invalid syntax: unexpected language: {lang}")
-            if langs[lang] is not None:
-                raise ValueError(f"Invalid syntax: repeated language: {lang}")
             langs[lang] = obj[lang]
     return True
 
 
-def is_sizes_valid(values):
+def is_sizes_valid(values: List[str]):
     if len(values) == 0:
         raise ValueError("Invalid structure: sizes section has no objects")
     sizes = {
@@ -77,8 +91,6 @@ def is_sizes_valid(values):
         for size in obj:
             if size != 'x' and size != 'y':
                 raise ValueError(f"Invalid syntax: unexpected size: '{size}'")
-            if sizes[size] is not None:
-                raise ValueError(f"Invalid syntax: repeated size: '{size}'")
             if obj[size] == 0:
                 raise ValueError(f"Invalid value: '{size}'-size should be >0")
             check_type_valid(size, obj[size], int)
@@ -94,21 +106,21 @@ def is_sizes_valid(values):
     return True, sizes['x'], sizes['y']
 
 
-def check_if_more_then_zero(parameter, value):
+def check_if_more_then_zero(parameter: str, value: int):
     if value < 1:
         raise ValueError(f"Invalid value: '{parameter}'-parameter should be >0")
 
 
-def check_if_point_in_map(point, map_size):
+def check_if_point_in_map(point: Tuple[int, int], map_size: Tuple[int, int]):
     if all(cord > 0 for cord in point):
         if point[0] <= map_size[0] and point[1] <= map_size[1]:
             return True
         else:
             raise ValueError(f"Invalid value: point {point} not fit in map sizes {map_size}")
-    raise ValueError(f"Invalid value: point {point} should be between (0, 0) and {map_size}")
+    raise ValueError(f"Invalid value: point {point} should be between (1, 1) and {map_size}")
 
 
-def is_platforms_valid(values, map_x_size, map_y_size, map):
+def is_platforms_valid(values: List[str], map_x_size: int, map_y_size: int, map: List[List[bool]]):
     parsed = [parse_object(val) for val in values]
     for platform in parsed:
         if 'x' not in platform:
@@ -133,7 +145,7 @@ def is_platforms_valid(values, map_x_size, map_y_size, map):
     return True
 
 
-def is_thorns_valid(values, map_x_size, map_y_size, map):
+def is_thorns_valid(values: List[str], map_x_size:int, map_y_size:int, map:List[List[bool]]):
     parsed = [parse_object(val) for val in values]
     for thorns in parsed:
         if 'x' not in thorns:
@@ -153,7 +165,7 @@ def is_thorns_valid(values, map_x_size, map_y_size, map):
     return True
 
 
-def is_flags_valid(values, map_x_size, map_y_size, map):
+def is_flags_valid(values: List[str], map_x_size:int, map_y_size:int, map:List[List[bool]]):
     flags = {
         "red": False,
         "blue": False
